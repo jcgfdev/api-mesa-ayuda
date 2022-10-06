@@ -1,4 +1,4 @@
-package com.enyoi.apimesaayuda.aplicacion.entites;
+package com.enyoi.apimesaayuda.aplicacion.entities;
 
 
 import lombok.Data;

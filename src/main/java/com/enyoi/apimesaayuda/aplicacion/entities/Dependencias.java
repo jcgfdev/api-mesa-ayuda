@@ -24,5 +24,5 @@ public class Dependencias {
     @NotBlank
     @Size(max = 120)
     @NonNull
-    private String nombre_Dependencia;
+    private String nombreDependencia;
 }

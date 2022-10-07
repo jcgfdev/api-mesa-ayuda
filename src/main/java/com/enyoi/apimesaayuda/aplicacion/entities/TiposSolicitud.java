@@ -23,5 +23,5 @@ public class TiposSolicitud {
         @NotBlank
         @Size(max = 100)
         @NonNull
-        private String tipo_solicitud;
+        private String tipoSolicitud;
 }

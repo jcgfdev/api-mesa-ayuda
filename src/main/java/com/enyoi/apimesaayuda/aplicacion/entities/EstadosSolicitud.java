@@ -23,7 +23,7 @@ public class EstadosSolicitud {
     @NonNull
     @Column(length = 30)
     @NotBlank
-    private String nombre_estado;
+    private String nombreEstado;
 
 
 

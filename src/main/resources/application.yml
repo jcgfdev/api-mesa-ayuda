@@ -17,5 +17,5 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mesaayudabd
     username: root
-    password: Bamyomania1E
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver

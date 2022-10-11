@@ -18,6 +18,7 @@ public class SolicitudesDTO {
     private UsuariosDTO solicitanteId;
     private String titulo;
     private String descripcion;
+    private Date fechaSolicitud;
     private Date fechaFinalizado;
     private EstadosSolicitudDTO estadoId;
 }

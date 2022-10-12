@@ -22,7 +22,7 @@ public interface SolicitudesRepository extends JpaRepository<Solicitudes, Long> 
 
     Page<Solicitudes> findByTipoSolicitudId(TiposSolicitud tiposSolicitudId, Pageable pageable);
 
-    Page<Solicitudes> findByDeDependenciasId(Dependencias dependenciasId, Pageable pageable);
+    Page<Solicitudes> findByDependenciasId(Dependencias dependenciasId, Pageable pageable);
 
     Page<Solicitudes> findBySolicitanteId(Usuarios solicitanteId, Pageable pageable);
 
@@ -31,5 +31,4 @@ public interface SolicitudesRepository extends JpaRepository<Solicitudes, Long> 
     Page<Solicitudes> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, Pageable pageable);
 
     Page<Solicitudes> findByEstadoId(EstadosSolicitud estadoId, Pageable pageable);
-
 }

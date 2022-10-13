@@ -4,10 +4,12 @@ import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.repositories.DependenciasRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
+import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +43,7 @@ public class DependenciasService implements IDependenciasService {
         if (dependenciasOptional.isPresent()) {
             dependencias = dependenciasOptional.get();
             DependenciasDTO dependenciasDTO = modelMapper.map(dependencias, DependenciasDTO.class);
-            return  dependenciasDTO;
+            return dependenciasDTO;
         } else {
             throw new NotDataFound("dependencia no existe");
         }
@@ -49,12 +51,29 @@ public class DependenciasService implements IDependenciasService {
 
     @Override
     public DependenciasDTO findByNombreDependencia(String nombreDependencia) {
-        return null;
+        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findByNombreDependencia(nombreDependencia);
+        Dependencias dependencias;
+        if (dependenciasOptional.isPresent()) {
+            dependencias = dependenciasOptional.get();
+            DependenciasDTO dependenciasDTO = modelMapper.map(dependencias, DependenciasDTO.class);
+            return dependenciasDTO;
+        } else {
+            throw new NotDataFound("dependencia no existe");
+        }
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public DependenciasDTO create(String nombreDependencia) {
-        return null;
+        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findByNombreDependencia(nombreDependencia);
+        if (dependenciasOptional.isPresent()) {
+            throw new AlreadyExists("dependencia ya existe");
+        } else {
+            Dependencias dependencias = new Dependencias();
+            dependencias.setNombreDependencia(nombreDependencia);
+            DependenciasDTO dependenciasDTO = modelMapper.map(dependenciasRepository.save(dependencias), DependenciasDTO.class);
+            return dependenciasDTO;
+        }
     }
 
     @Override

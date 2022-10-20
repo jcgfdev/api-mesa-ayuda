@@ -29,9 +29,11 @@ public class DependenciasService implements IDependenciasService {
     public List<DependenciasDTO> findAll() {
         List<Dependencias> dependenciasList = dependenciasRepository.findAll();
         List<DependenciasDTO> dependenciasDTOList = new ArrayList<>();
-        for (int i = 0; i <= dependenciasList.size(); i++) {
-            DependenciasDTO dependenciasDTO = modelMapper.map(dependenciasList.get(i), DependenciasDTO.class);
-            dependenciasDTOList.add(dependenciasDTO);
+        if (dependenciasList.size() > 0) {
+            for (int i = 0; i <= dependenciasList.size(); i++) {
+                DependenciasDTO dependenciasDTO = modelMapper.map(dependenciasList.get(i), DependenciasDTO.class);
+                dependenciasDTOList.add(dependenciasDTO);
+            }
         }
         return dependenciasDTOList;
     }

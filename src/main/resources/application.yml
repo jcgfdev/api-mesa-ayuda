@@ -4,6 +4,16 @@ api:
   basePackage: com.enyoi.apimesaayuda
   description: Api para aplicacion Mesa de ayuda
   terms: https://
+
+#Server configurations
+server:
+  servlet:
+    context-path: /api-mesa-ayuda
+  port: ${PORT:8080}
+  error:
+    include-message: always
+    include-binding-errors: always
+
 #Spring configs
 spring:
   jpa:
@@ -19,3 +29,23 @@ spring:
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
+  mail:
+    host: smtp.office365.com
+    port: 587
+    username: backend@enyoi.co
+    password: EY.back2022*
+    properties:
+      mail:
+        smtp:
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+          auth: true
+          starttls:
+            required: true
+            enable: true
+
+#Token Configs
+jwt:
+  secret: Ap1M3544yud@
+  expiration: 3600000

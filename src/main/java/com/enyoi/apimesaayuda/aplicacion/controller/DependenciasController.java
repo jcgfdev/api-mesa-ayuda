@@ -35,6 +35,18 @@ public class DependenciasController {
         return (ResponseEntity<List<DependenciasDTO>>) responseDTOService.response(dependenciasService.findAll(), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/obtener-uno")
+    public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("id") long id) {
+        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findById(id), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/obtener-uno-por-nombre")
+    public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("nombre") String nombre) {
+        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findByNombreDependencia(nombre), HttpStatus.OK);
+    }
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Dependencia creada exitosamente",
                     content = {@Content(mediaType = "application/json",
@@ -50,4 +62,24 @@ public class DependenciasController {
         }
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Dependencia Actualizada exitosamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuariosDTO.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al Actualizada Dependencia",
+                    content = @Content)})
+    @PutMapping("/update-dependencia")
+    public ResponseEntity<DependenciasDTO> updateDependencia(@Valid @RequestBody Dependencias dependencias, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.update(dependencias), HttpStatus.OK);
+        }
+    }
+
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @DeleteMapping("/eliminar-uno")
+    public ResponseEntity<String> eliminarUno(@RequestParam("id") long id) {
+        return (ResponseEntity<String>) responseDTOService.response(dependenciasService.delete(id), HttpStatus.OK);
+    }
 }

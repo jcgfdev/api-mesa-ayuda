@@ -4,6 +4,7 @@ import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
+import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -60,11 +61,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     }
 
     @Override
-    public EstadosSolicitudDTO create(String nombreEstado) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
-
-        EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
-        estadosSolicitud.setNombreEstado(nombreEstado);
+    public EstadosSolicitudDTO create(String nombreEstado ) {
+           EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
+        estadosSolicitud.setNombreEstado(estadosSolicitud.getNombreEstado());
         EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
         return estadosSolicitudDTO;
 

@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
+import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import lombok.RequiredArgsConstructor;
@@ -12,31 +13,51 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/estadossolicitud")
+@RequestMapping("/estadosSolicitud")
 @RequiredArgsConstructor
 public class EstadosSolicitudController {
+
     private final ResponseDTOService responseDTOService;
 
-    private IEstadosSolicitudService estadosSolicitudService;
+    private final IEstadosSolicitudService estadosSolicitudService;
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos-estados")
-    public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos(){
+    public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos() {
         return (ResponseEntity<List<EstadosSolicitudDTO>>) responseDTOService.response(estadosSolicitudService.findAll(), HttpStatus.OK);
-
     }
-
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos-estados/{id}")
-    public ResponseEntity<?> obtenerId(@PathVariable Long id){
+    public ResponseEntity<?> obtenerId(@PathVariable Long id) {
         Map<String, Object> response = new HashMap<>();
         estadosSolicitudService.findById(id);
         response.put("mensaje", "Solicitud Encontrada!");
-        return new ResponseEntity<Map<String,Object>>(response,HttpStatus.OK);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/obtener-nombre-estados/{nombreEstado}")
+    public ResponseEntity<?> obtenerNombreEstado(@PathVariable String nombreEstado) {
+        Map<String, Object> response = new HashMap<>();
+        estadosSolicitudService.findByNombreEstado(nombreEstado);
+        response.put("mensaje", "Solicitd de nombre encontrada");
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    }
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PostMapping("/crearSolicitud")
+    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@RequestBody EstadosSolicitud estadosSolicitud){
+
+         return (ResponseEntity<EstadosSolicitudDTO>)responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
+
+    }
+
+
+
+
+
 
 
 

@@ -17,5 +17,7 @@ public interface IEstadosSolicitudService {
     EstadosSolicitudDTO update(Long id, String nombreEstado);
 
     String delete(Long id);
+
+
 }
 

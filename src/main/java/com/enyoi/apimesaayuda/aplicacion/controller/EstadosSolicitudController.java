@@ -1,7 +1,9 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
+import com.enyoi.apimesaayuda.base.exceptions.ResourceNotFoundException;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,9 +23,8 @@ import java.util.Map;
 public class EstadosSolicitudController {
 
     private final ResponseDTOService responseDTOService;
-
     private final IEstadosSolicitudService estadosSolicitudService;
-
+    private final EstadosSolicitudRepository estadosSolicitudRepository;
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos-estados")
     public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos() {
@@ -53,15 +54,24 @@ public class EstadosSolicitudController {
          return (ResponseEntity<EstadosSolicitudDTO>)responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
 
     }
-    private ResponseEntity<EstadosSolicitudDTO>update(){
-        return ;
+
+
+    @PutMapping("/update-estado/{id}")
+    public ResponseEntity<EstadosSolicitudDTO> update(@PathVariable Long id, @RequestBody EstadosSolicitud estadosSolicitud) {
+    EstadosSolicitud upestado = estadosSolicitudRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException("El estado no existe: " + id));
+    upestado.setNombreEstado(estadosSolicitud.getNombreEstado());
+    estadosSolicitudRepository.save(upestado);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
-
-
-
+    @DeleteMapping("/delete-estado/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable ("id") Long id) {
+       EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(id)
+               .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id: " + id));
+       estadosSolicitudRepository.delete(estadosSolicitud);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
 
 
 }

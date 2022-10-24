@@ -53,6 +53,9 @@ public class EstadosSolicitudController {
          return (ResponseEntity<EstadosSolicitudDTO>)responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
 
     }
+    private ResponseEntity<EstadosSolicitudDTO>update(){
+        return ;
+    }
 
 
 

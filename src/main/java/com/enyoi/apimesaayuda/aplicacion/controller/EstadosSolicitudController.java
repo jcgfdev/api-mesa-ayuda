@@ -59,7 +59,7 @@ public class EstadosSolicitudController {
     @PutMapping("/update-estado/{id}")
     public ResponseEntity<EstadosSolicitudDTO> update(@PathVariable Long id, @RequestBody EstadosSolicitud estadosSolicitud) {
     EstadosSolicitud upestado = estadosSolicitudRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("El estado no existe: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("El estado de Solicitud no existe: " + id));
     upestado.setNombreEstado(estadosSolicitud.getNombreEstado());
     estadosSolicitudRepository.save(upestado);
         return new ResponseEntity<>(HttpStatus.OK);

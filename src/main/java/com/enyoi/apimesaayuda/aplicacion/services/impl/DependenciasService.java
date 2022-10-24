@@ -8,6 +8,7 @@ import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,12 +30,12 @@ public class DependenciasService implements IDependenciasService {
     public List<DependenciasDTO> findAll() {
         List<Dependencias> dependenciasList = dependenciasRepository.findAll();
         List<DependenciasDTO> dependenciasDTOList = new ArrayList<>();
-        if (dependenciasList.size() > 0) {
-            for (int i = 0; i <= dependenciasList.size(); i++) {
-                DependenciasDTO dependenciasDTO = modelMapper.map(dependenciasList.get(i), DependenciasDTO.class);
+
+            dependenciasList.forEach(dependencia -> {
+                DependenciasDTO dependenciasDTO = modelMapper.map(dependencia, DependenciasDTO.class);
                 dependenciasDTOList.add(dependenciasDTO);
-            }
-        }
+            });
+
         return dependenciasDTOList;
     }
 
@@ -79,12 +80,25 @@ public class DependenciasService implements IDependenciasService {
     }
 
     @Override
-    public DependenciasDTO update(Long id, String nombreDependencia) {
-        return null;
+    public DependenciasDTO update(Dependencias dependencias) {
+        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findById(dependencias.getId());
+        if (dependenciasOptional.isPresent()) {
+            Dependencias dependeciaGuardar = dependenciasOptional.get();
+            dependeciaGuardar.setNombreDependencia(dependencias.getNombreDependencia());
+            //dependeciaGuardar.setApellido(dependencias.getApellido());
+
+            dependeciaGuardar = dependenciasRepository.save(dependeciaGuardar);
+
+            return modelMapper.map(dependeciaGuardar,DependenciasDTO.class);
+
+        } else {
+            throw new NotDataFound("dependencia no existe");
+        }
     }
 
     @Override
     public String delete(Long id) {
-        return null;
+        dependenciasRepository.deleteById(id);
+        return "Registro eliminado";
     }
 }

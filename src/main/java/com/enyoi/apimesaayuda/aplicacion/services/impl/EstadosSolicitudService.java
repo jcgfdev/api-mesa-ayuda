@@ -1,13 +1,15 @@
 package com.enyoi.apimesaayuda.aplicacion.services.impl;
+import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
+import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
-import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,54 +51,61 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
 
     @Override
     public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
-        EstadosSolicitud estadosSolicitud;
-        if (estadosSolicitudOptional.isPresent()) {
-            estadosSolicitud = estadosSolicitudOptional.get();
-            EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
-            return estadosSolicitudDTO;
-        } else {
-            throw new NotDataFound("el nombre solicitud no existe");
-        }
+     List<EstadosSolicitud> estadosSolicitudList = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
+List<EstadosSolicitudDTO> estadosSolicitudDTOList = new ArrayList<>();
+    estadosSolicitudList.forEach(estadosSolicitud -> {
+        EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
+        estadosSolicitudDTOList.add(estadosSolicitudDTO);
+    });
+return (EstadosSolicitudDTO) estadosSolicitudDTOList;
     }
 
     @Override
-    public EstadosSolicitudDTO create(String nombreEstado ) {
-           EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
-        estadosSolicitud.setNombreEstado(estadosSolicitud.getNombreEstado());
-        EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
-        return estadosSolicitudDTO;
-
-
+    public EstadosSolicitudDTO create(String nombreEstado) {
+        return null;
     }
 
 
-    @Override
     public EstadosSolicitudDTO update(Long id, String nombreEstado) {
+        return null;
+    }
+
+
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public EstadosSolicitudDTO createNew(String nombreEstado, Long id) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
-        EstadosSolicitud estadosSolicitud;
         if (estadosSolicitudOptional.isPresent()) {
-            estadosSolicitud = estadosSolicitudOptional.get();
+            throw new AlreadyExists("dependencia ya Fue creada");
+        } else {
+            EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
             estadosSolicitud.setNombreEstado(nombreEstado);
             EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
             return estadosSolicitudDTO;
-
-
-        } else {
-            throw new NotDataFound("nombre solicitud no existe");
         }
     }
 
+
+
+    public EstadosSolicitudDTO updateId(EstadosSolicitud estadosSolicitud) {
+        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(estadosSolicitud.getId());
+        if (estadosSolicitudOptional.isPresent()) {
+            EstadosSolicitud updateEstado = estadosSolicitudOptional.get();
+            updateEstado.setNombreEstado(estadosSolicitud.getNombreEstado());
+
+            updateEstado = estadosSolicitudRepository.save(updateEstado);
+
+            return modelMapper.map(updateEstado,EstadosSolicitudDTO.class);
+
+        } else {
+            throw new NotDataFound("Solicitud no existe");
+        }
+    }
     @Override
     public String delete(Long id) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
-        EstadosSolicitud estadosSolicitud;
-        if (estadosSolicitudOptional.isPresent()) {
-            estadosSolicitud = estadosSolicitudOptional.get();
-            estadosSolicitudRepository.deleteById(id);
-            return null;
-        } else {
-            throw new NotDataFound("estado sulicitud no existe");
-        }
+        estadosSolicitudRepository.deleteById(id);
+        return "Eliminado con Exito";
     }
+
 }

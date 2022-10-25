@@ -6,6 +6,7 @@ import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface EstadosSolicitudRepository extends JpaRepository<EstadosSolicitud, Long> {
@@ -13,6 +14,6 @@ public interface EstadosSolicitudRepository extends JpaRepository<EstadosSolicit
     @Override
     Optional<EstadosSolicitud> findById(Long id);
 
-    Optional<EstadosSolicitud> findByNombreEstado(String nombreEstado);
+    List<EstadosSolicitud> findByNombreEstado(String nombreEstado);
 
 }

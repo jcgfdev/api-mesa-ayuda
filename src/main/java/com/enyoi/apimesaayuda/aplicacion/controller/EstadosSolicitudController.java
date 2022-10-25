@@ -1,16 +1,25 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
+import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
+import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.ResourceNotFoundException;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
+import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,45 +41,51 @@ public class EstadosSolicitudController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-todos-estados/{id}")
-    public ResponseEntity<?> obtenerId(@PathVariable Long id) {
-        Map<String, Object> response = new HashMap<>();
-        estadosSolicitudService.findById(id);
-        response.put("mensaje", "Solicitud Encontrada!");
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    @GetMapping("/obtener-todos-id")
+    public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id) {
+        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id), HttpStatus.OK);
     }
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-nombre-estados/{nombreEstado}")
-    public ResponseEntity<?> obtenerNombreEstado(@PathVariable String nombreEstado) {
-        Map<String, Object> response = new HashMap<>();
-        estadosSolicitudService.findByNombreEstado(nombreEstado);
-        response.put("mensaje", "Solicitd de nombre encontrada");
-        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+    @GetMapping("/obtener-nombre-estados")
+    public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@PathVariable("nombreEstado") String nombreEstado) {
+        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Estado Actualizado exitosamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuariosDTO.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al Actualizada Estado",
+                    content = @Content)})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/crearSolicitud")
-    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@RequestBody EstadosSolicitud estadosSolicitud){
-
-         return (ResponseEntity<EstadosSolicitudDTO>)responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
-
+    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
+        }
     }
 
 
-    @PutMapping("/update-estado/{id}")
-    public ResponseEntity<EstadosSolicitudDTO> update(@PathVariable Long id, @RequestBody EstadosSolicitud estadosSolicitud) {
-    EstadosSolicitud upestado = estadosSolicitudRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("El estado de Solicitud no existe: " + id));
-    upestado.setNombreEstado(estadosSolicitud.getNombreEstado());
-    estadosSolicitudRepository.save(upestado);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Estado Actualizado exitosamente",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuariosDTO.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al Actualizada Estado",
+                    content = @Content)})
+    @PutMapping("/update-estado")
+    public ResponseEntity<EstadosSolicitudDTO> updateId(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.updateId(estadosSolicitud), HttpStatus.OK);
+        }
     }
+    @DeleteMapping("/delete-estado")
+    public ResponseEntity<String> delete(@RequestParam("id") long id){
+        return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id), HttpStatus.OK);
 
-    @DeleteMapping("/delete-estado/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable ("id") Long id) {
-       EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(id)
-               .orElseThrow(() -> new ResourceNotFoundException("Employee not exist with id: " + id));
-       estadosSolicitudRepository.delete(estadosSolicitud);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 

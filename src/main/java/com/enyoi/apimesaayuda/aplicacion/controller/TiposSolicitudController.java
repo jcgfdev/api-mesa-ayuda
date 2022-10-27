@@ -2,7 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
-import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarTiposSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
@@ -71,11 +71,11 @@ public class TiposSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al Actualizada Tipo_solicitud",
                     content = @Content)})
     @PutMapping("/update-tipo-solicitud")
-    public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody ActualizarTiposSolicitudRequests actualizarTiposSolicitudRequests, BindingResult bindingResult) {
+    public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody TiposSolicitudRequests tiposSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.update(actualizarTiposSolicitudRequests), HttpStatus.OK);
+            return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.update(tiposSolicitudRequests), HttpStatus.OK);
         }
     }
 

@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class ActualizarTiposSolicitudRequests {
+public class TiposSolicitudRequests {
     @NonNull
     private Long id;
     @NonNull

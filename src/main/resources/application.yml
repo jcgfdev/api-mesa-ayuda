@@ -14,6 +14,11 @@ server:
     include-message: always
     include-binding-errors: always
 
+#Swagger-ui custom path
+springdoc:
+  api-docs:
+    path: /api-docs
+
 #Spring configs
 spring:
   jpa:

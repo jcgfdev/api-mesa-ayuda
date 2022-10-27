@@ -3,6 +3,7 @@ import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.ResourceNotFoundException;
@@ -58,11 +59,11 @@ public class EstadosSolicitudController {
                     content = @Content)})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/crearSolicitud")
-    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult){
+    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(actualizarEstadosSolicitudRequests.getNombreEstado()), HttpStatus.CREATED);
         }
     }
 
@@ -75,11 +76,11 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al Actualizada Estado",
                     content = @Content)})
     @PutMapping("/update-estado")
-    public ResponseEntity<EstadosSolicitudDTO> updateId(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult) {
+    public ResponseEntity<EstadosSolicitudDTO> updateId(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.updateId(estadosSolicitud), HttpStatus.OK);
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.update(actualizarEstadosSolicitudRequests), HttpStatus.OK);
         }
     }
     @DeleteMapping("/delete-estado")

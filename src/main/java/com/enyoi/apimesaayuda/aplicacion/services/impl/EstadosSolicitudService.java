@@ -1,7 +1,8 @@
 package com.enyoi.apimesaayuda.aplicacion.services.impl;
-import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
+
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -51,26 +52,19 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
 
     @Override
     public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
-     List<EstadosSolicitud> estadosSolicitudList = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
-List<EstadosSolicitudDTO> estadosSolicitudDTOList = new ArrayList<>();
-    estadosSolicitudList.forEach(estadosSolicitud -> {
-        EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
-        estadosSolicitudDTOList.add(estadosSolicitudDTO);
-    });
-return (EstadosSolicitudDTO) estadosSolicitudDTOList;
+        List<EstadosSolicitud> estadosSolicitudList = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
+        List<EstadosSolicitudDTO> estadosSolicitudDTOList = new ArrayList<>();
+        estadosSolicitudList.forEach(estadosSolicitud -> {
+            EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
+            estadosSolicitudDTOList.add(estadosSolicitudDTO);
+        });
+        return (EstadosSolicitudDTO) estadosSolicitudDTOList;
     }
 
     @Override
     public EstadosSolicitudDTO create(String nombreEstado) {
         return null;
     }
-
-
-    public EstadosSolicitudDTO update(Long id, String nombreEstado) {
-        return null;
-    }
-
-
 
 
     @Transactional(rollbackFor = Exception.class)
@@ -87,21 +81,22 @@ return (EstadosSolicitudDTO) estadosSolicitudDTOList;
     }
 
 
-
-    public EstadosSolicitudDTO updateId(EstadosSolicitud estadosSolicitud) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(estadosSolicitud.getId());
+    public EstadosSolicitudDTO update(ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests) {
+        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(actualizarEstadosSolicitudRequests.getEstadosSolicitudId());
         if (estadosSolicitudOptional.isPresent()) {
             EstadosSolicitud updateEstado = estadosSolicitudOptional.get();
-            updateEstado.setNombreEstado(estadosSolicitud.getNombreEstado());
+            updateEstado.setNombreEstado(actualizarEstadosSolicitudRequests.getNombreEstado() != null
+                    ? actualizarEstadosSolicitudRequests.getNombreEstado() : updateEstado.getNombreEstado());
 
             updateEstado = estadosSolicitudRepository.save(updateEstado);
 
-            return modelMapper.map(updateEstado,EstadosSolicitudDTO.class);
+            return modelMapper.map(updateEstado, EstadosSolicitudDTO.class);
 
         } else {
             throw new NotDataFound("Solicitud no existe");
         }
     }
+
     @Override
     public String delete(Long id) {
         estadosSolicitudRepository.deleteById(id);

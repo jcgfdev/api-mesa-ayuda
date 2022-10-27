@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.services;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface IDependenciasService {
 
     DependenciasDTO create(String nombreDependencia);
 
-    DependenciasDTO update(Dependencias dependencias);
+    DependenciasDTO update(DependenciasRequests dependenciasRequests);
 
     String delete(Long id);
 }

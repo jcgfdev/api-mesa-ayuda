@@ -61,7 +61,7 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
             return estadosSolicitudDTO;
         }else {
-            throw new NotDataFound("estado no existe");
+            throw new NotDataFound("estado no existe ");
         }
     }
 

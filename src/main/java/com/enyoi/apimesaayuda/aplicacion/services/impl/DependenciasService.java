@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.DependenciasRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -80,11 +81,11 @@ public class DependenciasService implements IDependenciasService {
     }
 
     @Override
-    public DependenciasDTO update(Dependencias dependencias) {
-        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findById(dependencias.getId());
+    public DependenciasDTO update(DependenciasRequests dependenciasRequests) {
+        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findById(dependenciasRequests.getId());
         if (dependenciasOptional.isPresent()) {
             Dependencias dependeciaGuardar = dependenciasOptional.get();
-            dependeciaGuardar.setNombreDependencia(dependencias.getNombreDependencia());
+            dependeciaGuardar.setNombreDependencia(dependenciasRequests.getNombreDependencia());
             //dependeciaGuardar.setApellido(dependencias.getApellido());
 
             dependeciaGuardar = dependenciasRepository.save(dependeciaGuardar);

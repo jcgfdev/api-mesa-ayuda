@@ -3,15 +3,18 @@ import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.ResourceNotFoundException;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,7 +36,18 @@ public class EstadosSolicitudController {
 
     private final ResponseDTOService responseDTOService;
     private final IEstadosSolicitudService estadosSolicitudService;
-    private final EstadosSolicitudRepository estadosSolicitudRepository;
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos-estados")
     public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos() {
@@ -45,6 +59,18 @@ public class EstadosSolicitudController {
     public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id), HttpStatus.OK);
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-nombre-estados")
     public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@PathVariable("nombreEstado") String nombreEstado) {
@@ -58,30 +84,48 @@ public class EstadosSolicitudController {
                     content = @Content)})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/crearSolicitud")
-    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult){
+    private ResponseEntity<EstadosSolicitudDTO> crearSolicitud(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(estadosSolicitud.getNombreEstado()), HttpStatus.CREATED);
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(actualizarEstadosSolicitudRequests.getNombreEstado()), HttpStatus.CREATED);
         }
     }
 
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Estado Actualizado exitosamente",
+            @ApiResponse(responseCode = "200", description = "data found",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = UsuariosDTO.class))}),
-            @ApiResponse(responseCode = "500", description = "Error al Actualizada Estado",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PutMapping("/update-estado")
-    public ResponseEntity<EstadosSolicitudDTO> updateId(@Valid @RequestBody EstadosSolicitud estadosSolicitud, BindingResult bindingResult) {
+    public ResponseEntity<EstadosSolicitudDTO> update(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.updateId(estadosSolicitud), HttpStatus.OK);
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.update(actualizarEstadosSolicitudRequests), HttpStatus.OK);
         }
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-estado")
     public ResponseEntity<String> delete(@RequestParam("id") long id){
         return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id), HttpStatus.OK);

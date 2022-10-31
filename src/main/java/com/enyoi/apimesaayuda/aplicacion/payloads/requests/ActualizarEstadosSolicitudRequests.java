@@ -12,7 +12,7 @@ public class ActualizarEstadosSolicitudRequests {
 
     @NonNull
     private Long estadosSolicitudId;
-    @NonNull
+
     @NotBlank
     private String nombreEstado;
 }

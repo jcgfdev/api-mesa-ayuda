@@ -19,7 +19,6 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class EstadosSolicitudService implements IEstadosSolicitudService {
-
     private final ModelMapper modelMapper;
 
     private final EstadosSolicitudRepository estadosSolicitudRepository;
@@ -38,7 +37,6 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     }
 
 
-
     @Override
     public EstadosSolicitudDTO findById(Long id) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
@@ -54,16 +52,10 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
 
     @Override
     public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
-        EstadosSolicitud estadosSolicitud;
-        if(estadosSolicitudOptional.isPresent()){
-            estadosSolicitud = estadosSolicitudOptional.get();
-            EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
-            return estadosSolicitudDTO;
-        }else {
-            throw new NotDataFound("estado no existe ");
-        }
+        return null;
     }
+
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -78,8 +70,6 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             return estadosSolicitudDTO;
         }
     }
-
-
 
     @Override
     public EstadosSolicitudDTO update (ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests){
@@ -99,9 +89,8 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     }
 
     @Override
-    public String delete(Long id) {
+    public String delete (Long id){
         estadosSolicitudRepository.deleteById(id);
         return "Eliminado con Exito";
     }
-
 }

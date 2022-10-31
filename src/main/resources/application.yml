@@ -32,7 +32,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mesaayudabd
     username: root
-    password: root
+    password: Bamyomania1E
     driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
     host: smtp.office365.com

@@ -1,12 +1,8 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
-import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
+
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
-import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
-import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
-import com.enyoi.apimesaayuda.base.exceptions.ResourceNotFoundException;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,9 +19,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)

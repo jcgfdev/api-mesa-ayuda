@@ -14,6 +14,6 @@ public interface EstadosSolicitudRepository extends JpaRepository<EstadosSolicit
     @Override
     Optional<EstadosSolicitud> findById(Long id);
 
-    List<EstadosSolicitud> findByNombreEstado(String nombreEstado);
+    Optional<EstadosSolicitud> findByNombreEstado(String nombreEstado);
 
 }

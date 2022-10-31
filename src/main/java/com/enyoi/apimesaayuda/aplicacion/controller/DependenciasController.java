@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
@@ -69,11 +70,11 @@ public class DependenciasController {
             @ApiResponse(responseCode = "500", description = "Error al Actualizada Dependencia",
                     content = @Content)})
     @PutMapping("/update-dependencia")
-    public ResponseEntity<DependenciasDTO> updateDependencia(@Valid @RequestBody Dependencias dependencias, BindingResult bindingResult) {
+    public ResponseEntity<DependenciasDTO> updateDependencia(@Valid @RequestBody DependenciasRequests dependenciasRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<DependenciasDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.update(dependencias), HttpStatus.OK);
+            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.update(dependenciasRequests), HttpStatus.OK);
         }
     }
 

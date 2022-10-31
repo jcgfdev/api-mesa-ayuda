@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.TiposSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -82,7 +83,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
     }
 
     @Override
-    public TiposSolicitudDTO update(TiposSolicitud tipoSolicitud) {
+    public TiposSolicitudDTO update(TiposSolicitudRequests tiposSolicitudRequests) {
         return null;
     }
 

@@ -8,11 +8,10 @@ import javax.validation.constraints.NotBlank;
 
 @Getter
 @Setter
-public class ActualizarEstadosSolicitudRequests {
-
+public class TiposSolicitudRequests {
     @NonNull
-    private Long estadosSolicitudId;
-
+    private Long id;
+    @NonNull
     @NotBlank
-    private String nombreEstado;
+    private String tipoSolicitud;
 }

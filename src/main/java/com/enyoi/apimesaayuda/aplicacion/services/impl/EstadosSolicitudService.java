@@ -80,7 +80,7 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     public EstadosSolicitudDTO create(String nombreEstado) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
         if (estadosSolicitudOptional.isPresent()) {
-            throw new AlreadyExists("nombre estado solicitud ya existe");
+            throw new AlreadyExists("nombre estado solicitud ya existe. ");
         } else {
             EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
             estadosSolicitud.setNombreEstado(nombreEstado);

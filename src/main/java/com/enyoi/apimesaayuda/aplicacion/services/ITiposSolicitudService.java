@@ -6,7 +6,6 @@ import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequest
 import java.util.List;
 
 public interface ITiposSolicitudService {
-    List<TiposSolicitudDTO> finAll();
 
     List<TiposSolicitudDTO> findAll();
 
@@ -14,7 +13,7 @@ public interface ITiposSolicitudService {
 
     TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud);
 
-    TiposSolicitudDTO create(String nombreTipoSolicitud);
+    TiposSolicitudDTO create(String TipoSolicitud);
 
     TiposSolicitudDTO update(TiposSolicitudRequests tiposSolicitudRequests);
 

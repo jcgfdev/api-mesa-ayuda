@@ -10,8 +10,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class TiposSolicitudRequests {
     @NonNull
-    private Long id;
-    @NonNull
+    private Long tipoSolicitudId;
     @NotBlank
     private String tipoSolicitud;
 }

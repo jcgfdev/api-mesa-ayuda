@@ -30,6 +30,7 @@ import java.util.List;
 public class EstadosSolicitudController {
 
     private final ResponseDTOService responseDTOService;
+
     private final IEstadosSolicitudService estadosSolicitudService;
 
     @ApiResponses(value = {
@@ -53,11 +54,11 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "200", description = "data found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
-            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+            @ApiResponse(responseCode = "401", description = "debe iniciar session.",
                     content = @Content),
-            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes.",
                     content = @Content),
-            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion..",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")

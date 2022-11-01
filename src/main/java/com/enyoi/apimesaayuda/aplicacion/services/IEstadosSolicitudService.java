@@ -5,7 +5,9 @@ import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
 
 import java.util.List;
-
+/*
+ ** @Auth:ElenaM
+ */
 public interface IEstadosSolicitudService {
 
     List<EstadosSolicitudDTO> findAll();

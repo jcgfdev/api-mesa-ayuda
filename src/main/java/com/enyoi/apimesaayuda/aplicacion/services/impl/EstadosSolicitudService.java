@@ -22,7 +22,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     private final ModelMapper modelMapper;
 
     private final EstadosSolicitudRepository estadosSolicitudRepository;
-
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     public List<EstadosSolicitudDTO> findAll() {
         List<EstadosSolicitud> estadosSolicitudList = estadosSolicitudRepository.findAll();
@@ -36,7 +38,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
         return estadosSolicitudDTOList;
     }
 
-
+/*
+**@Auth: D David Galeano Puche
+ */
     @Override
     public EstadosSolicitudDTO findById(Long id) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
@@ -49,20 +53,34 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             throw new NotDataFound("estado no existe");
         }
     }
-
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
-        return null;
+        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
+        EstadosSolicitud estadosSolicitud;
+        if (estadosSolicitudOptional.isPresent()){
+            estadosSolicitud=estadosSolicitudOptional.get();
+            EstadosSolicitudDTO estadosSolicitudDTO = modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
+            return estadosSolicitudDTO;
+        }
+        else {
+            throw new NotDataFound("Nombre estado no existe");
+        }
+
     }
 
 
-
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     @Transactional(rollbackFor = Exception.class)
     public EstadosSolicitudDTO create(String nombreEstado) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
         if (estadosSolicitudOptional.isPresent()) {
-            throw new AlreadyExists("nombre estado solicitud ya existe");
+            throw new AlreadyExists("nombre estado solicitud ya existe. ");
         } else {
             EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
             estadosSolicitud.setNombreEstado(nombreEstado);
@@ -70,7 +88,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             return estadosSolicitudDTO;
         }
     }
-
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     public EstadosSolicitudDTO update (ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests){
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(actualizarEstadosSolicitudRequests.getEstadosSolicitudId());
@@ -87,7 +107,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             throw new NotDataFound("Solicitud no existe");
         }
     }
-
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     public String delete (Long id){
         estadosSolicitudRepository.deleteById(id);

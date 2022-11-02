@@ -82,7 +82,7 @@ public class EstadosSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-nombre-estados")
-    public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@PathVariable("nombreEstado") String nombreEstado) {
+    public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
     }
     @ApiResponses(value = {

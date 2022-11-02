@@ -113,7 +113,7 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     @Override
     public String delete (Long id){
         Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
-                .orElseThrow(() -> new NotDataFound("No existe")));
+                .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) ));
 
         estadosSolicitudRepository.deleteById(id);
 

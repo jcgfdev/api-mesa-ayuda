@@ -63,7 +63,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar informacion..",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @GetMapping("/obtener-todos-id")
     public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id), HttpStatus.OK);
@@ -80,7 +80,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') ")
     @GetMapping("/obtener-nombre-estados")
     public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
@@ -96,7 +96,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/crearSolicitud")
     public ResponseEntity<EstadosSolicitudDTO> create(@RequestParam("nombreEstado")String nombreEstado) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(nombreEstado), HttpStatus.CREATED);
@@ -115,7 +115,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PutMapping("/update-estado")
     public ResponseEntity<EstadosSolicitudDTO> update(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

@@ -34,7 +34,7 @@ public class TiposSolicitudController {
     private final ITiposSolicitudService tiposSolicitudService;
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Solicitud exitosa",
+            @ApiResponse(responseCode = "200", description = "Solicitud exitosa",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = TiposSolicitudDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para obtener la informaicion",
@@ -49,8 +49,9 @@ public class TiposSolicitudController {
     public ResponseEntity<List<TiposSolicitudDTO>> obtenerTodos() {
         return (ResponseEntity<List<TiposSolicitudDTO>>) responseDTOService.response(tiposSolicitudService.findAll(), HttpStatus.OK);
     }
+
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Solicitud exitosa",
+            @ApiResponse(responseCode = "200", description = "Solicitud exitosa",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = TiposSolicitudDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para obtener la informaicion",
@@ -65,8 +66,9 @@ public class TiposSolicitudController {
     public ResponseEntity<TiposSolicitudDTO> ObtenerUno(@RequestParam("id") Long id) {
         return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findById(id), HttpStatus.OK);
     }
+
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Solicitud exitosa",
+            @ApiResponse(responseCode = "200", description = "Solicitud exitosa",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = TiposSolicitudDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para obtener la informaicion",
@@ -83,7 +85,7 @@ public class TiposSolicitudController {
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Tipo_solicitud creada exitosamente",
+            @ApiResponse(responseCode = "200", description = "Tipo_solicitud creada exitosamente",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = UsuariosDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para crear el Tipo_solicitud",
@@ -95,12 +97,12 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/saveTipoSolicitud")
-    public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam("tipoSolicitud")  String tipoSolicitud) {
-            return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.create(tipoSolicitud), HttpStatus.CREATED);
-        }
+    public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam("tipoSolicitud") String tipoSolicitud) {
+        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.create(tipoSolicitud), HttpStatus.CREATED);
+    }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Tipo_solicitud actualizada exitosamente",
+            @ApiResponse(responseCode = "200", description = "Tipo_solicitud actualizada exitosamente",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = UsuariosDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para actualizar",
@@ -119,8 +121,9 @@ public class TiposSolicitudController {
             return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.update(tiposSolicitudRequests), HttpStatus.OK);
         }
     }
+
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Tipo_solicitud eliminada exitosamente",
+            @ApiResponse(responseCode = "200", description = "Tipo_solicitud eliminada exitosamente",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = UsuariosDTO.class))}),
             @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para eliminar",

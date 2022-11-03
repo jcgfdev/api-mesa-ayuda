@@ -18,12 +18,14 @@ import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
 import com.enyoi.apimesaayuda.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,14 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public Page<SolicitudesDTO> findAll(int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
+        List<SolicitudesDTO> list = solicitudesRepository.findAll(pageable)
+                .stream()
+                .map(solicitudes -> modelMapper.map(solicitudes, SolicitudesDTO.class))
+                .collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     @Override

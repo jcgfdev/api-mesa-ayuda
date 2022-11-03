@@ -1,6 +1,7 @@
 package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
+import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.TiposSolicitudRepository;
@@ -26,12 +27,12 @@ public class TiposSolicitudService implements ITiposSolicitudService {
 
     @Override
     public List<TiposSolicitudDTO> findAll() {
-        List<TiposSolicitud> tiposSolicitudList=tiposSolicitudRepository.findAll();
-        List<TiposSolicitudDTO> tiposSolicitudDTOList= new ArrayList<>();
-            tiposSolicitudList.forEach(tiposSolicitud -> {
-                TiposSolicitudDTO tiposSolicitudDTO=modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
-                tiposSolicitudDTOList.add(tiposSolicitudDTO);
-            });
+        List<TiposSolicitud> tiposSolicitudList = tiposSolicitudRepository.findAll();
+        List<TiposSolicitudDTO> tiposSolicitudDTOList = new ArrayList<>();
+        tiposSolicitudList.forEach(tiposSolicitud -> {
+            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
+            tiposSolicitudDTOList.add(tiposSolicitudDTO);
+        });
 
         return tiposSolicitudDTOList;
     }
@@ -45,7 +46,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
             return tiposSolicitudDTO;
         } else {
-            throw new NotDataFound("tipo_solicitud no existe");
+            throw new NotDataFound("Tipo solicitud no existe");
         }
 
     }
@@ -59,7 +60,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
             return tiposSolicitudDTO;
         } else {
-            throw new NotDataFound("tipo_solicitud no existe");
+            throw new NotDataFound("Tipo solicitud no existe");
         }
     }
 
@@ -68,7 +69,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
     public TiposSolicitudDTO create(String tipoSolicitud) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository.findByTipoSolicitud(tipoSolicitud);
         if (tiposSolicitudOptional.isPresent()) {
-            throw new AlreadyExists("tipo_solicitud ya existe");
+            throw new AlreadyExists("Tipo solicitud ya existe");
         } else {
             TiposSolicitud tiposSolicitud = new TiposSolicitud();
             tiposSolicitud.setTipoSolicitud(tipoSolicitud);
@@ -86,17 +87,19 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             tipoSolicitudGuardar.setTipoSolicitud(tiposSolicitudRequests.getTipoSolicitud() != null
                     ? tiposSolicitudRequests.getTipoSolicitud()
                     : tipoSolicitudGuardar.getTipoSolicitud());
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map((Object) tiposSolicitudRepository.save(tipoSolicitudGuardar), (Type) TiposSolicitud.class);
+            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitudRepository.save(tipoSolicitudGuardar), TiposSolicitudDTO.class);
             return tiposSolicitudDTO;
         } else {
-            throw new NotDataFound("tipo_solicitud no existe");
+            throw new NotDataFound("Tipo solicitud no existe");
         }
     }
 
 
     @Override
     public String delete(Long id) {
+        Optional<TiposSolicitud> tiposSolicitudOptional = Optional.ofNullable(tiposSolicitudRepository.findById(id)
+                .orElseThrow(() -> new NotDataFound("No existe el Tipo solicitud: " + id)));
         tiposSolicitudRepository.deleteById(id);
-        return "Registro eliminado";
+        return tiposSolicitudOptional.get() + "Tipo solicitud eliminado con Exito";
     }
 }

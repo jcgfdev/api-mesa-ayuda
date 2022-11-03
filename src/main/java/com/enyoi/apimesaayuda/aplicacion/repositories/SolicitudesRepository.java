@@ -5,6 +5,7 @@ import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.entities.Solicitudes;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import org.apache.commons.lang3.function.Failable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,9 +27,12 @@ public interface SolicitudesRepository extends JpaRepository<Solicitudes, Long> 
 
     Page<Solicitudes> findBySolicitanteId(Usuarios solicitanteId, Pageable pageable);
 
-    Page<Solicitudes> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, Pageable pageable);
+    Page<Solicitudes> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin,Pageable pageable);
 
     Page<Solicitudes> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, Pageable pageable);
 
     Page<Solicitudes> findByEstadoId(EstadosSolicitud estadoId, Pageable pageable);
+
+
+
 }

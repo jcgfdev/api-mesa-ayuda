@@ -21,6 +21,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -67,6 +69,21 @@ public class SolicitudesService implements ISolicitudesService {
         }
 
     }
+    @Override
+    public Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
+        List<SolicitudesDTO> list = solicitudesRepository.findByFechaSolicitudBetween(fechaInicio, fechaFin, pageable)
+                .stream()
+                .map(solicitudes -> modelMapper.map(solicitudes, SolicitudesDTO.class))
+                .collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
+
+        }
+
+
+
 
     @Override
     public Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction) {
@@ -92,19 +109,25 @@ public class SolicitudesService implements ISolicitudesService {
         return null;
     }
 
-    @Override
-    public Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
-    }
+
 
     @Override
     public Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
+    return null;
     }
 
-    @Override
+   @Override
     public Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
+        EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(estadoId)
+                .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+        List<SolicitudesDTO> list = solicitudesRepository.findByEstadoId(estadosSolicitud, pageable)
+                .stream()
+                .map(solicitudes -> modelMapper.map(solicitudes, SolicitudesDTO.class))
+                .collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     @Override

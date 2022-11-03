@@ -43,7 +43,7 @@ public class DependenciasController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-todos")
+    @GetMapping("/obtenerTodos")
     public ResponseEntity<List<DependenciasDTO>> obtenerTodos() {
         return (ResponseEntity<List<DependenciasDTO>>) responseDTOService.response(dependenciasService.findAll(), HttpStatus.OK);
     }
@@ -60,7 +60,7 @@ public class DependenciasController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-uno")
+    @GetMapping("/obtenerUno")
     public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("id") long id) {
         return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findById(id), HttpStatus.OK);
     }
@@ -77,7 +77,7 @@ public class DependenciasController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-uno-por-nombre")
+    @GetMapping("/obtenerUnoporNombre")
     public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("nombre") String nombre) {
         return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findByNombreDependencia(nombre), HttpStatus.OK);
     }
@@ -115,7 +115,7 @@ public class DependenciasController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
-    @PutMapping("/update-dependencia")
+    @PutMapping("/updateDependencia")
     public ResponseEntity<DependenciasDTO> updateDependencia(@Valid @RequestBody DependenciasRequests dependenciasRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<DependenciasDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
@@ -136,7 +136,7 @@ public class DependenciasController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @DeleteMapping("/eliminar-uno")
+    @DeleteMapping("/eliminarUno")
     public ResponseEntity<String> eliminarUno(@RequestParam("id") long id) {
         return (ResponseEntity<String>) responseDTOService.response(dependenciasService.delete(id), HttpStatus.OK);
     }

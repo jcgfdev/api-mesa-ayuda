@@ -56,21 +56,39 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public SolicitudesDTO findByCodigo(String codigo) {
+        Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(codigo);
+        Solicitudes solicitudes;
+        if (solicitudesOptional.isPresent()) {
+            solicitudes = solicitudesOptional.get();
+            SolicitudesDTO solicitudesDTO= modelMapper.map(solicitudes, SolicitudesDTO.class);
+            return  solicitudesDTO;
+        } else {
+            throw new NotDataFound(NOEXISTENDATOS);
+        }
+
+    }
+
+    @Override
+    public Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
+        TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(tiposSolicitudId)
+                .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                List<SolicitudesDTO> list = solicitudesRepository.findByTipoSolicitudId(tiposSolicitud, pageable)
+                .stream()
+                .map(solicitudes -> modelMapper.map(solicitudes, SolicitudesDTO.class))
+                .collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }
+
+    @Override
+    public Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction) {
         return null;
     }
 
     @Override
-    public Page<SolicitudesDTO> findByTipoSolicitudId(TiposSolicitud tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
-    }
-
-    @Override
-    public Page<SolicitudesDTO> findByDependenciasId(Dependencias dependenciasId, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
-    }
-
-    @Override
-    public Page<SolicitudesDTO> findBySolicitanteId(Usuarios solicitanteId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction) {
         return null;
     }
 
@@ -85,7 +103,7 @@ public class SolicitudesService implements ISolicitudesService {
     }
 
     @Override
-    public Page<SolicitudesDTO> findByEstadoId(EstadosSolicitud estadoId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction) {
         return null;
     }
 

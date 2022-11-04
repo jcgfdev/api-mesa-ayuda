@@ -17,17 +17,17 @@ public interface ISolicitudesService {
 
     SolicitudesDTO findByCodigo(String codigo);
 
-    Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByTipoSolicitudId(TiposSolicitud tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction);
 
-    Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByDependenciasId(Dependencias dependenciasId, int page, int size, String columnFilter, Sort.Direction direction);
 
-    Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findBySolicitanteId(Usuarios solicitanteId, int page, int size, String columnFilter, Sort.Direction direction);
 
     Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction);
 
     Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction);
 
-    Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByEstadoId(EstadosSolicitud estadoId, int page, int size, String columnFilter, Sort.Direction direction);
 
     SolicitudesDTO crear(SolicitudesRequest solicitudesRequest);
 

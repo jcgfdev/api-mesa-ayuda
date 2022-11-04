@@ -147,6 +147,12 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public String eliminar(Long id) {
-        return null;
+        Optional<Solicitudes> solicitudesOptional = Optional.ofNullable(solicitudesRepository.findById(id)
+                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: "+ id ) ));
+
+        solicitudesRepository.deleteById(id);
+
+        return solicitudesOptional.get() + "Eliminado con Exito";
     }
-}
+    }
+

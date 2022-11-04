@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
+
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
@@ -119,11 +120,39 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public SolicitudesDTO actualizar(ActualizarSolicitudesRequest actualizarSolicitudesRequest) {
-        return null;
+        Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(actualizarSolicitudesRequest.getCodigo());
+        if(solicitudesOptional.isPresent()){
+            Solicitudes solicitudesGuardar = solicitudesOptional.get();
+            solicitudesGuardar.setCodigo(actualizarSolicitudesRequest.getCodigo());
+            solicitudesGuardar.setDescripcion(actualizarSolicitudesRequest.getDescripcion());
+            solicitudesGuardar.setFechaSolicitud(actualizarSolicitudesRequest.getFechaSolicitud());
+            solicitudesGuardar.setFechaFinalizado(actualizarSolicitudesRequest.getFechaFinalizado());
+            solicitudesGuardar.setTitulo(actualizarSolicitudesRequest.getTitulo());
+            Dependencias dependencias = dependenciasRepository.findById(actualizarSolicitudesRequest.getDependenciasId())
+                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+            EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(actualizarSolicitudesRequest.getEstadoId())
+                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+            Usuarios usuarios = usuariosRepository.findById(actualizarSolicitudesRequest.getSolicitanteId())
+                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+            TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(actualizarSolicitudesRequest.getTipoSolicitudId())
+                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+
+            solicitudesGuardar = solicitudesRepository.save(solicitudesGuardar);
+            return modelMapper.map(solicitudesGuardar, SolicitudesDTO.class);
+
+        }else {
+            throw new NotDataFound("codigo de solicitud no existe");
+        }
     }
 
     @Override
     public String eliminar(Long id) {
-        return null;
+        Optional<Solicitudes> solicitudesOptional = Optional.ofNullable(solicitudesRepository.findById(id)
+                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: "+ id ) ));
+
+        solicitudesRepository.deleteById(id);
+
+        return solicitudesOptional.get() + "Eliminado con Exito";
     }
-}
+    }
+

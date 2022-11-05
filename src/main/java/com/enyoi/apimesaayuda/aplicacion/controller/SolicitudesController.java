@@ -22,11 +22,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
 import java.util.Date;
-import java.util.List;
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController

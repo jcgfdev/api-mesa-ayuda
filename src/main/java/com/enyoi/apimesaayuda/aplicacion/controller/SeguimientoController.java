@@ -50,6 +50,23 @@ public class SeguimientoController {
     }
 
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/delete-seguimiento")
+    public ResponseEntity<String> delete(@RequestParam("id") long id){
+        return (ResponseEntity<String>)responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
+
+    }
 
     
 

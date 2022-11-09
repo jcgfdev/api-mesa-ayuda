@@ -19,8 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,6 +66,16 @@ public class SeguimientoService implements ISeguimientosService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }
+
+
+    @Override
+    public java.lang.String delete(Long id) {
+        Optional<Seguimientos> seguimientosOptional = Optional.ofNullable(seguimientosRepository.findById(id))
+                .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) );
+    seguimientosRepository.deleteById(id);
+
+        return seguimientosOptional.get() + "Eliminado con Exito";
     }
 }
 

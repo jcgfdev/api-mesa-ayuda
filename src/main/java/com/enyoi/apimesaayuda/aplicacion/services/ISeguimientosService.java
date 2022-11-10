@@ -14,5 +14,7 @@ public interface ISeguimientosService {
 
 
 
+    String delete(Long id);
+
 
 }

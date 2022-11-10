@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
@@ -90,6 +91,29 @@ public class SeguimientoController {
             return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
             return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(seguimientosService.crear(seguimientosRequest), HttpStatus.CREATED);
+        }
+    }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/actualizar-seguimiento")
+    public ResponseEntity<SeguimientosDTO> actualizarSeguimiento(
+            @Valid @RequestBody ActualizarSeguimientosRequest actualizarSeguimientosRequest,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(seguimientosService.actualizar(
+                    actualizarSeguimientosRequest), HttpStatus.OK);
         }
     }
 

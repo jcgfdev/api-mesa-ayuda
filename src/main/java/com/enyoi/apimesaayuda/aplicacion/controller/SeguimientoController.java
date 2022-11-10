@@ -3,6 +3,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,8 +18,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Date;
 import java.util.List;
 
@@ -62,12 +65,36 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/fechaSolicitud")
-    public ResponseEntity<Page<SeguimientosDTO>> findBySolicitudesId(@RequestParam(value = "solicitudesId")Long solicitudesId,
-                                                                            @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                            @RequestParam(name = "size", defaultValue = "10") int size,
-                                                                            @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
-        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId,page,size,columnFilter,direction),HttpStatus.OK );
+    public ResponseEntity<Page<SeguimientosDTO>> findBySolicitudesId(@RequestParam(value = "solicitudesId") Long solicitudesId,
+                                                                     @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                     @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                     @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
+                                                                     @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId, page, size, columnFilter, direction), HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/actualizar-seguimiento")
+    public ResponseEntity<SeguimientosDTO> actualizarSeguimiento(
+            @Valid @RequestBody ActualizarSeguimientosRequest actualizarSeguimientosRequest,
+            BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(seguimientosService.actualizar(
+                    actualizarSeguimientosRequest), HttpStatus.OK);
+        }
     }
 
 
@@ -84,11 +111,10 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-seguimiento")
-    public ResponseEntity<String> delete(@RequestParam("id") long id){
-        return (ResponseEntity<String>)responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id) {
+        return (ResponseEntity<String>) responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
 
     }
 
-    
 
 }

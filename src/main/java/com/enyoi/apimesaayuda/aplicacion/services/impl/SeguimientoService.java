@@ -6,11 +6,13 @@ import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.Seguimientos;
 import com.enyoi.apimesaayuda.aplicacion.entities.Solicitudes;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.SeguimientosRepository;
 import com.enyoi.apimesaayuda.aplicacion.repositories.SolicitudesRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
 import com.enyoi.apimesaayuda.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -36,6 +38,7 @@ public class SeguimientoService implements ISeguimientosService {
     //Repositorios
     private final SeguimientosRepository seguimientosRepository;
     private final SolicitudesRepository solicitudesRepository;
+    private final UsuariosRepository usuariosRepository;
 
     @Override
     public List<SeguimientosDTO> findAll() {
@@ -68,12 +71,33 @@ public class SeguimientoService implements ISeguimientosService {
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
+    @Override
+    public SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest) {
+        Optional<Seguimientos> seguimientosOptional = seguimientosRepository
+                .findById(actualizarSeguimientosRequest.getSeguimientoId());
+        if (seguimientosOptional.isPresent()) {
+            Seguimientos seguimientosGuardar = seguimientosOptional.get();
+            Solicitudes solicitudes = solicitudesRepository.findById(actualizarSeguimientosRequest.getSolicitudesId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar.setTitulo(actualizarSeguimientosRequest.getTitulo());
+            seguimientosGuardar.setFechaRealizado(actualizarSeguimientosRequest.getFechaRealizado());
+            seguimientosGuardar.setDescripcion(actualizarSeguimientosRequest.getDescripcion());
+            Usuarios usuarios = usuariosRepository.findById(actualizarSeguimientosRequest.getResponsableId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
+            return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
+        } else {
+            throw new NotDataFound("Id de seguimiento no existe");
+        }
+
+    }
+
 
     @Override
     public java.lang.String delete(Long id) {
         Optional<Seguimientos> seguimientosOptional = Optional.ofNullable(seguimientosRepository.findById(id))
-                .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) );
-    seguimientosRepository.deleteById(id);
+                .orElseThrow(() -> new NotDataFound("No existe el estado: " + id));
+        seguimientosRepository.deleteById(id);
 
         return seguimientosOptional.get() + "Eliminado con Exito";
     }

@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 
 
+import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SolicitudesRequest;
@@ -121,6 +122,8 @@ public class SolicitudesController  {
         }
     }
 
+
+
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
                     content = {@Content(mediaType = "application/json",
@@ -138,5 +141,6 @@ public class SolicitudesController  {
         return (ResponseEntity<String>)responseDTOService.response(solicitudesService.eliminar(id), HttpStatus.OK);
 
     }
+
 
 }

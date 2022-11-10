@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.security.models;
 
+
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

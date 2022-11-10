@@ -2,24 +2,19 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
-import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
-import com.enyoi.apimesaayuda.aplicacion.entities.Seguimientos;
-import com.enyoi.apimesaayuda.aplicacion.entities.Solicitudes;
-import com.enyoi.apimesaayuda.aplicacion.repositories.SeguimientosRepository;
-import com.enyoi.apimesaayuda.aplicacion.repositories.SolicitudesRepository;
+import com.enyoi.apimesaayuda.aplicacion.entities.*;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;
+import com.enyoi.apimesaayuda.aplicacion.repositories.*;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
 import com.enyoi.apimesaayuda.utils.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +31,7 @@ public class SeguimientoService implements ISeguimientosService {
     //Repositorios
     private final SeguimientosRepository seguimientosRepository;
     private final SolicitudesRepository solicitudesRepository;
+    private final UsuariosRepository usuariosRepository;
 
     @Override
     public List<SeguimientosDTO> findAll() {
@@ -68,6 +64,23 @@ public class SeguimientoService implements ISeguimientosService {
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
+    @Override
+    public SeguimientosDTO crear(SeguimientosRequest seguimientosRequest) {
+
+            Seguimientos seguimientos = new Seguimientos();
+            Solicitudes solicitudes = solicitudesRepository.findById(seguimientosRequest.getSolicitudesId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientos.setSolicitudesId(solicitudes);
+            seguimientos.setTitulo(seguimientosRequest.getTitulo());
+            seguimientos.setFechaRealizado(seguimientosRequest.getFechaRealizado());
+            seguimientos.setDescripcion(seguimientosRequest.getDescripcion());
+            Usuarios usuarios = usuariosRepository.findById(seguimientosRequest.getResponsableId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientos.setResponsableId(usuarios);
+
+            return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
+
+    }
 
     @Override
     public java.lang.String delete(Long id) {

@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 
 
+import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SolicitudesRequest;
@@ -120,5 +121,6 @@ public class SolicitudesController  {
             return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.actualizar(actualizarSolicitudesRequest), HttpStatus.OK);
         }
     }
+
 
 }

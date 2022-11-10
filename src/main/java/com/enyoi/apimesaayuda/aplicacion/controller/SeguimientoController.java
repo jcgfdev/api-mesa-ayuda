@@ -49,6 +49,27 @@ public class SeguimientoController {
         return (ResponseEntity<List<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findAll(), HttpStatus.OK);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SeguimientosDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/fechaSolicitud")
+    public ResponseEntity<Page<SeguimientosDTO>> findBySolicitudesId(@RequestParam(value = "solicitudesId")Long solicitudesId,
+                                                                            @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                            @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                            @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
+        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId,page,size,columnFilter,direction),HttpStatus.OK );
+    }
+
 
 
     

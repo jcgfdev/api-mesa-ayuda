@@ -2,10 +2,10 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
-import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
-import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
+import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,7 +22,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Date;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -65,38 +64,34 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/fechaSolicitud")
-    public ResponseEntity<Page<SeguimientosDTO>> findBySolicitudesId(@RequestParam(value = "solicitudesId") Long solicitudesId,
-                                                                     @RequestParam(name = "page", defaultValue = "0") int page,
-                                                                     @RequestParam(name = "size", defaultValue = "10") int size,
-                                                                     @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                     @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
-        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId, page, size, columnFilter, direction), HttpStatus.OK);
+    public ResponseEntity<Page<SeguimientosDTO>> findBySolicitudesId(@RequestParam(value = "solicitudesId")Long solicitudesId,
+                                                                            @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                            @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                            @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
+        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId,page,size,columnFilter,direction),HttpStatus.OK );
     }
 
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "data found",
+            @ApiResponse(responseCode = "201", description = "Seguimiento creado exitosamente",
                     content = {@Content(mediaType = "application/json",
-                            schema = @Schema(implementation = EstadosSolicitudDTO.class))}),
-            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                            schema = @Schema(implementation = UsuariosDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "Debe iniciar sesion para crear el seguimiento",
                     content = @Content),
-            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+            @ApiResponse(responseCode = "403", description = "Sin privilegios suficientes",
                     content = @Content),
-            @ApiResponse(responseCode = "500", description = "error al solicitar",
+            @ApiResponse(responseCode = "500", description = "Error al crear Seguimiento",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/actualizar-seguimiento")
-    public ResponseEntity<SeguimientosDTO> actualizarSeguimiento(
-            @Valid @RequestBody ActualizarSeguimientosRequest actualizarSeguimientosRequest,
-            BindingResult bindingResult) {
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PostMapping("/saveSeguimiento")
+    public ResponseEntity<SeguimientosDTO> saveSeguimiento(@Valid @RequestBody SeguimientosRequest seguimientosRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(seguimientosService.actualizar(
-                    actualizarSeguimientosRequest), HttpStatus.OK);
+            return (ResponseEntity<SeguimientosDTO>) responseDTOService.response(seguimientosService.crear(seguimientosRequest), HttpStatus.CREATED);
         }
     }
-
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
@@ -111,10 +106,11 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-seguimiento")
-    public ResponseEntity<String> delete(@RequestParam("id") long id) {
-        return (ResponseEntity<String>) responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id){
+        return (ResponseEntity<String>)responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
 
     }
 
+    
 
 }

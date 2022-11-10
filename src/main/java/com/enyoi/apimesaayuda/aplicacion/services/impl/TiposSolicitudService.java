@@ -1,9 +1,8 @@
 package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
-import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.TiposSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -13,7 +12,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -80,7 +78,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
     }
 
     @Override
-    public TiposSolicitudDTO update(TiposSolicitudRequests tiposSolicitudRequests) {
+    public TiposSolicitudDTO update(TiposSolicitudRequest tiposSolicitudRequests) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository.findById(tiposSolicitudRequests.getTipoSolicitudId());
         if (tiposSolicitudOptional.isPresent()) {
             TiposSolicitud tipoSolicitudGuardar = tiposSolicitudOptional.get();

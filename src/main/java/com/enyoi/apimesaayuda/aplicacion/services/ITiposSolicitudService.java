@@ -1,7 +1,7 @@
 package com.enyoi.apimesaayuda.aplicacion.services;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
-import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequest;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ public interface ITiposSolicitudService {
 
     TiposSolicitudDTO create(String TipoSolicitud);
 
-    TiposSolicitudDTO update(TiposSolicitudRequests tiposSolicitudRequests);
+    TiposSolicitudDTO update(TiposSolicitudRequest tiposSolicitudRequests);
 
     String delete(Long id);
 

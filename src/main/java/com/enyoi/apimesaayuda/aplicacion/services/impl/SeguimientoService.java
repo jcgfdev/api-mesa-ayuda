@@ -3,6 +3,7 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.*;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.*;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
@@ -79,6 +80,27 @@ public class SeguimientoService implements ISeguimientosService {
             seguimientos.setResponsableId(usuarios);
 
             return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
+
+    }
+
+    @Override
+    public SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest) {
+        Optional<Seguimientos> seguimientosOptional = seguimientosRepository
+                .findById(actualizarSeguimientosRequest.getSeguimientoId());
+        if (seguimientosOptional.isPresent()) {
+            Seguimientos seguimientosGuardar = seguimientosOptional.get();
+            Solicitudes solicitudes = solicitudesRepository.findById(actualizarSeguimientosRequest.getSolicitudesId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar.setTitulo(actualizarSeguimientosRequest.getTitulo());
+            seguimientosGuardar.setFechaRealizado(actualizarSeguimientosRequest.getFechaRealizado());
+            seguimientosGuardar.setDescripcion(actualizarSeguimientosRequest.getDescripcion());
+            Usuarios usuarios = usuariosRepository.findById(actualizarSeguimientosRequest.getResponsableId())
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
+            return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
+        } else {
+            throw new NotDataFound("Id de seguimiento no existe");
+        }
 
     }
 

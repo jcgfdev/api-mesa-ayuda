@@ -1,7 +1,6 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 
 
-
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
@@ -32,7 +31,7 @@ import java.util.Date;
 @RestController
 @RequestMapping("/Solicitudes")
 @RequiredArgsConstructor
-public class SolicitudesController  {
+public class SolicitudesController {
     private final ResponseDTOService responseDTOService;
     private final ISolicitudesService solicitudesService;
 
@@ -52,8 +51,97 @@ public class SolicitudesController  {
     public ResponseEntity<Page<SolicitudesDTO>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                         @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                        @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
-        return(ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findAll(page, size, columnFilter, direction),HttpStatus.OK);
+                                                        @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findAll(page, size, columnFilter, direction), HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/findByCodigo")
+    public ResponseEntity<SolicitudesDTO> findByCodigo(@RequestParam("codigo") String codigo) {
+        return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.findByCodigo(codigo),
+                HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/findByTipoSolicitudId")
+    public ResponseEntity<Page<SolicitudesDTO>> findByTipoSolicitudId
+            (@RequestParam("tipoSolicitudId") Long tipoSolicitudId,
+             @RequestParam(name = "page", defaultValue = "0") int page,
+             @RequestParam(name = "size", defaultValue = "10") int size,
+             @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
+                .findByTipoSolicitudId(tipoSolicitudId, page, size, columFilter, direction), HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/findByDependenciasId")
+    public ResponseEntity<Page<SolicitudesDTO>> findByDependenciasId
+            (@RequestParam("dependenciasId") Long dependenciasId,
+             @RequestParam(name = "page", defaultValue = "0") int page,
+             @RequestParam(name = "size", defaultValue = "10") int size,
+             @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
+                .findByDependenciasId(dependenciasId, page, size, columFilter, direction), HttpStatus.OK);
+
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/findBySolicitanteId")
+    public ResponseEntity<Page<SolicitudesDTO>> findBySolicitanteId
+            (@RequestParam("solicitanteId") Long solicitanteId,
+             @RequestParam(name = "page", defaultValue = "0") int page,
+             @RequestParam(name = "size", defaultValue = "10") int size,
+             @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
+                .findBySolicitanteId(solicitanteId, page, size, columFilter, direction), HttpStatus.OK);
+
     }
 
     @ApiResponses(value = {
@@ -69,13 +157,36 @@ public class SolicitudesController  {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/fechaSolicitud")
-    public ResponseEntity<Page<SolicitudesDTO>> findByFechaSolicitudBetween(@RequestParam(value = "fechaInicio")Date fechaInicio,
-                                                                            @RequestParam (value ="fechaFin")Date fechaFin,
+    public ResponseEntity<Page<SolicitudesDTO>> findByFechaSolicitudBetween(@RequestParam(value = "fechaInicio") Date fechaInicio,
+                                                                            @RequestParam(value = "fechaFin") Date fechaFin,
                                                                             @RequestParam(name = "page", defaultValue = "0") int page,
                                                                             @RequestParam(name = "size", defaultValue = "10") int size,
                                                                             @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
-        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio,fechaFin,page,size,columnFilter,direction),HttpStatus.OK );
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction), HttpStatus.OK);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/findByEstadoId")
+    public ResponseEntity<Page<SolicitudesDTO>> findByEstadoId
+            (@RequestParam("estadoId") Long estadoId,
+             @RequestParam(name = "page", defaultValue = "0") int page,
+             @RequestParam(name = "size", defaultValue = "10") int size,
+             @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
+                .findByEstadoId(estadoId, page, size, columFilter, direction), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -100,7 +211,6 @@ public class SolicitudesController  {
     }
 
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Solicitud actualizada exitosamente",
                     content = {@Content(mediaType = "application/json",
@@ -123,7 +233,6 @@ public class SolicitudesController  {
     }
 
 
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
                     content = {@Content(mediaType = "application/json",
@@ -137,8 +246,8 @@ public class SolicitudesController  {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-Solicitudes")
-    public ResponseEntity<String> delete(@RequestParam("id") long id){
-        return (ResponseEntity<String>)responseDTOService.response(solicitudesService.eliminar(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id) {
+        return (ResponseEntity<String>) responseDTOService.response(solicitudesService.eliminar(id), HttpStatus.OK);
 
     }
 

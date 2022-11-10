@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -170,7 +171,7 @@ public class SolicitudesService implements ISolicitudesService {
     @Override
     public SolicitudesDTO actualizar(ActualizarSolicitudesRequest actualizarSolicitudesRequest) {
         Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(actualizarSolicitudesRequest.getCodigo());
-        if(solicitudesOptional.isPresent()){
+        if (solicitudesOptional.isPresent()) {
             Solicitudes solicitudesGuardar = solicitudesOptional.get();
             solicitudesGuardar.setCodigo(actualizarSolicitudesRequest.getCodigo());
             solicitudesGuardar.setDescripcion(actualizarSolicitudesRequest.getDescripcion());
@@ -178,18 +179,18 @@ public class SolicitudesService implements ISolicitudesService {
             solicitudesGuardar.setFechaFinalizado(actualizarSolicitudesRequest.getFechaFinalizado());
             solicitudesGuardar.setTitulo(actualizarSolicitudesRequest.getTitulo());
             Dependencias dependencias = dependenciasRepository.findById(actualizarSolicitudesRequest.getDependenciasId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(actualizarSolicitudesRequest.getEstadoId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             Usuarios usuarios = usuariosRepository.findById(actualizarSolicitudesRequest.getSolicitanteId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(actualizarSolicitudesRequest.getTipoSolicitudId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
 
             solicitudesGuardar = solicitudesRepository.save(solicitudesGuardar);
             return modelMapper.map(solicitudesGuardar, SolicitudesDTO.class);
 
-        }else {
+        } else {
             throw new NotDataFound("codigo de solicitud no existe");
         }
     }
@@ -197,7 +198,7 @@ public class SolicitudesService implements ISolicitudesService {
     @Override
     public String eliminar(Long id) {
         Optional<Solicitudes> solicitudesOptional = Optional.ofNullable(solicitudesRepository.findById(id)
-                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: "+ id ) ));
+                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: " + id)));
 
         solicitudesRepository.deleteById(id);
 

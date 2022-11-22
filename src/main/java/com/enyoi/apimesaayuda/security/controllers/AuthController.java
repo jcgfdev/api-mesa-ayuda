@@ -5,7 +5,7 @@ import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import com.enyoi.apimesaayuda.security.payloads.requests.LoginRequest;
 import com.enyoi.apimesaayuda.security.payloads.requests.UsuariosRequest;
 import com.enyoi.apimesaayuda.security.payloads.responses.UsuarioLoginResponse;
-import com.enyoi.apimesaayuda.security.services.impl.UsuariosService;
+import com.enyoi.apimesaayuda.security.controllers.services.impl.UsuariosService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

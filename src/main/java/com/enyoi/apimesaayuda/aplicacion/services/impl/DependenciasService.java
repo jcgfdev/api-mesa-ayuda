@@ -9,20 +9,19 @@ import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class DependenciasService implements IDependenciasService {
     //Utilidades
     private final ModelMapper modelMapper;
+    private static final String NOEXISTENDATOS = "No existen datos";
 
     //Repositorios
     private final DependenciasRepository dependenciasRepository;
@@ -46,10 +45,9 @@ public class DependenciasService implements IDependenciasService {
         Dependencias dependencias;
         if (dependenciasOptional.isPresent()) {
             dependencias = dependenciasOptional.get();
-            DependenciasDTO dependenciasDTO = modelMapper.map(dependencias, DependenciasDTO.class);
-            return dependenciasDTO;
+            return modelMapper.map(dependencias, DependenciasDTO.class);
         } else {
-            throw new NotDataFound("dependencia no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 
@@ -59,10 +57,9 @@ public class DependenciasService implements IDependenciasService {
         Dependencias dependencias;
         if (dependenciasOptional.isPresent()) {
             dependencias = dependenciasOptional.get();
-            DependenciasDTO dependenciasDTO = modelMapper.map(dependencias, DependenciasDTO.class);
-            return dependenciasDTO;
+            return modelMapper.map(dependencias, DependenciasDTO.class);
         } else {
-            throw new NotDataFound("dependencia no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 
@@ -75,8 +72,7 @@ public class DependenciasService implements IDependenciasService {
         } else {
             Dependencias dependencias = new Dependencias();
             dependencias.setNombreDependencia(nombreDependencia);
-            DependenciasDTO dependenciasDTO = modelMapper.map(dependenciasRepository.save(dependencias), DependenciasDTO.class);
-            return dependenciasDTO;
+            return modelMapper.map(dependenciasRepository.save(dependencias), DependenciasDTO.class);
         }
     }
 
@@ -86,14 +82,10 @@ public class DependenciasService implements IDependenciasService {
         if (dependenciasOptional.isPresent()) {
             Dependencias dependeciaGuardar = dependenciasOptional.get();
             dependeciaGuardar.setNombreDependencia(dependenciasRequests.getNombreDependencia());
-            //dependeciaGuardar.setApellido(dependencias.getApellido());
-
             dependeciaGuardar = dependenciasRepository.save(dependeciaGuardar);
-
             return modelMapper.map(dependeciaGuardar,DependenciasDTO.class);
-
         } else {
-            throw new NotDataFound("dependencia no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 

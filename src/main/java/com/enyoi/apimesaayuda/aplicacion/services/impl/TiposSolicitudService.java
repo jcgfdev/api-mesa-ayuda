@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TiposSolicitudService implements ITiposSolicitudService {
     private final ModelMapper modelMapper;
+    private static final String NOEXISTENDATOS = "No esxisten datos";
     private final TiposSolicitudRepository tiposSolicitudRepository;
 
 
@@ -41,10 +42,9 @@ public class TiposSolicitudService implements ITiposSolicitudService {
         TiposSolicitud tiposSolicitud;
         if (tiposSolicitudOptional.isPresent()) {
             tiposSolicitud = tiposSolicitudOptional.get();
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
-            return tiposSolicitudDTO;
+            return modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
         } else {
-            throw new NotDataFound("Tipo solicitud no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
 
     }
@@ -55,10 +55,9 @@ public class TiposSolicitudService implements ITiposSolicitudService {
         TiposSolicitud tiposSolicitud;
         if (tiposSolicitudOptional.isPresent()) {
             tiposSolicitud = tiposSolicitudOptional.get();
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
-            return tiposSolicitudDTO;
+            return modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
         } else {
-            throw new NotDataFound("Tipo solicitud no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 
@@ -71,8 +70,7 @@ public class TiposSolicitudService implements ITiposSolicitudService {
         } else {
             TiposSolicitud tiposSolicitud = new TiposSolicitud();
             tiposSolicitud.setTipoSolicitud(tipoSolicitud);
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitudRepository.save(tiposSolicitud), TiposSolicitudDTO.class);
-            return tiposSolicitudDTO;
+            return modelMapper.map(tiposSolicitudRepository.save(tiposSolicitud), TiposSolicitudDTO.class);
         }
 
     }
@@ -85,10 +83,9 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             tipoSolicitudGuardar.setTipoSolicitud(tiposSolicitudRequests.getTipoSolicitud() != null
                     ? tiposSolicitudRequests.getTipoSolicitud()
                     : tipoSolicitudGuardar.getTipoSolicitud());
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitudRepository.save(tipoSolicitudGuardar), TiposSolicitudDTO.class);
-            return tiposSolicitudDTO;
+            return modelMapper.map(tiposSolicitudRepository.save(tipoSolicitudGuardar), TiposSolicitudDTO.class);
         } else {
-            throw new NotDataFound("Tipo solicitud no existe");
+            throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 
@@ -97,7 +94,12 @@ public class TiposSolicitudService implements ITiposSolicitudService {
     public String delete(Long id) {
         Optional<TiposSolicitud> tiposSolicitudOptional = Optional.ofNullable(tiposSolicitudRepository.findById(id)
                 .orElseThrow(() -> new NotDataFound("No existe el Tipo solicitud: " + id)));
-        tiposSolicitudRepository.deleteById(id);
-        return tiposSolicitudOptional.get() + "Tipo solicitud eliminado con Exito";
+        if (tiposSolicitudOptional.isPresent()){
+            tiposSolicitudRepository.deleteById(id);
+            return modelMapper.map(tiposSolicitudOptional.get(), TiposSolicitudDTO.class).getTipoSolicitud() + "Tipo solicitud eliminado con Exito";
+        }else {
+            throw new NotDataFound(NOEXISTENDATOS);
+        }
+
     }
 }

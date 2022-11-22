@@ -26,9 +26,4 @@ public class Dependencias {
     @NonNull
     private String nombreDependencia;
 
-   /* @NotBlank
-    @Size(max = 120)
-    @NonNull
-    private String apellido;*/
-
 }

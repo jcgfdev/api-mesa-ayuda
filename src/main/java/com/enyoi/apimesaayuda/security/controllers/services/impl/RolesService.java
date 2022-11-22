@@ -1,9 +1,9 @@
-package com.enyoi.apimesaayuda.security.services.impl;
+package com.enyoi.apimesaayuda.security.controllers.services.impl;
 
 import com.enyoi.apimesaayuda.security.entities.Roles;
 import com.enyoi.apimesaayuda.security.enums.Role;
 import com.enyoi.apimesaayuda.security.repositories.RolesRepository;
-import com.enyoi.apimesaayuda.security.services.IRolesService;
+import com.enyoi.apimesaayuda.security.controllers.services.IRolesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

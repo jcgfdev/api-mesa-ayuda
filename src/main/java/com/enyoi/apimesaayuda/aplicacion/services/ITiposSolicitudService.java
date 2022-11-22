@@ -13,7 +13,7 @@ public interface ITiposSolicitudService {
 
     TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud);
 
-    TiposSolicitudDTO create(String TipoSolicitud);
+    TiposSolicitudDTO create(String tipoSolicitud);
 
     TiposSolicitudDTO update(TiposSolicitudRequest tiposSolicitudRequests);
 

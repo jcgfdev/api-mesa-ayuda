@@ -1,7 +1,7 @@
 package com.enyoi.apimesaayuda.security.configs;
 
 
-import com.enyoi.apimesaayuda.security.services.impl.UserDetailsServiceImpl;
+import com.enyoi.apimesaayuda.security.controllers.services.impl.UserDetailsServiceImpl;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

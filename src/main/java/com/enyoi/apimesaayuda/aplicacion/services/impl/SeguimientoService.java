@@ -68,18 +68,18 @@ public class SeguimientoService implements ISeguimientosService {
     @Override
     public SeguimientosDTO crear(SeguimientosRequest seguimientosRequest) {
 
-            Seguimientos seguimientos = new Seguimientos();
-            Solicitudes solicitudes = solicitudesRepository.findById(seguimientosRequest.getSolicitudesId())
-                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
-            seguimientos.setSolicitudesId(solicitudes);
-            seguimientos.setTitulo(seguimientosRequest.getTitulo());
-            seguimientos.setFechaRealizado(seguimientosRequest.getFechaRealizado());
-            seguimientos.setDescripcion(seguimientosRequest.getDescripcion());
-            Usuarios usuarios = usuariosRepository.findById(seguimientosRequest.getResponsableId())
-                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
-            seguimientos.setResponsableId(usuarios);
+        Seguimientos seguimientos = new Seguimientos();
+        Solicitudes solicitudes = solicitudesRepository.findById(seguimientosRequest.getSolicitudesId())
+                .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+        seguimientos.setSolicitudesId(solicitudes);
+        seguimientos.setTitulo(seguimientosRequest.getTitulo());
+        seguimientos.setFechaRealizado(seguimientosRequest.getFechaRealizado());
+        seguimientos.setDescripcion(seguimientosRequest.getDescripcion());
+        Usuarios usuarios = usuariosRepository.findById(seguimientosRequest.getResponsableId())
+                .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+        seguimientos.setResponsableId(usuarios);
 
-            return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
+        return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
 
     }
 
@@ -91,11 +91,13 @@ public class SeguimientoService implements ISeguimientosService {
             Seguimientos seguimientosGuardar = seguimientosOptional.get();
             Solicitudes solicitudes = solicitudesRepository.findById(actualizarSeguimientosRequest.getSolicitudesId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar.setSolicitudesId(solicitudes);
             seguimientosGuardar.setTitulo(actualizarSeguimientosRequest.getTitulo());
             seguimientosGuardar.setFechaRealizado(actualizarSeguimientosRequest.getFechaRealizado());
             seguimientosGuardar.setDescripcion(actualizarSeguimientosRequest.getDescripcion());
             Usuarios usuarios = usuariosRepository.findById(actualizarSeguimientosRequest.getResponsableId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            seguimientosGuardar.setResponsableId(usuarios);
             seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
             return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
         } else {
@@ -107,10 +109,15 @@ public class SeguimientoService implements ISeguimientosService {
     @Override
     public java.lang.String delete(Long id) {
         Optional<Seguimientos> seguimientosOptional = Optional.ofNullable(seguimientosRepository.findById(id))
-                .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) );
-    seguimientosRepository.deleteById(id);
+                .orElseThrow(() -> new NotDataFound("No existe el estado: " + id));
+        if (seguimientosOptional.isPresent()) {
+            seguimientosRepository.deleteById(id);
 
-        return seguimientosOptional.get() + "Eliminado con Exito";
+            return modelMapper.map(seguimientosOptional.get(), SeguimientosDTO.class).getId() + "Eliminado con Exito";
+        } else {
+            throw new NotDataFound(NOEXISTENDATOS);
+        }
+
     }
 }
 

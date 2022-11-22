@@ -1,6 +1,5 @@
 package com.enyoi.apimesaayuda.aplicacion.payloads.requests;
 
-import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;

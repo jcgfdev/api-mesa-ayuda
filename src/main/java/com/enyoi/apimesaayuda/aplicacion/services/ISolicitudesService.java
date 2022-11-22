@@ -1,12 +1,8 @@
 package com.enyoi.apimesaayuda.aplicacion.services;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
-import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
-import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SolicitudesRequest;
-import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 

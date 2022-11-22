@@ -1,4 +1,4 @@
-package com.enyoi.apimesaayuda.security.services.impl;
+package com.enyoi.apimesaayuda.security.controllers.services.impl;
 
 import com.enyoi.apimesaayuda.base.exceptions.EmailException;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -15,10 +15,10 @@ import com.enyoi.apimesaayuda.security.payloads.requests.UsuariosRequest;
 import com.enyoi.apimesaayuda.security.payloads.responses.UsuarioLoginResponse;
 import com.enyoi.apimesaayuda.security.repositories.RolesRepository;
 import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
-import com.enyoi.apimesaayuda.security.services.IBuildEmailService;
-import com.enyoi.apimesaayuda.security.services.IConfirmationTokenService;
-import com.enyoi.apimesaayuda.security.services.IEmailService;
-import com.enyoi.apimesaayuda.security.services.IUsuariosService;
+import com.enyoi.apimesaayuda.security.controllers.services.IBuildEmailService;
+import com.enyoi.apimesaayuda.security.controllers.services.IConfirmationTokenService;
+import com.enyoi.apimesaayuda.security.controllers.services.IEmailService;
+import com.enyoi.apimesaayuda.security.controllers.services.IUsuariosService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -66,11 +66,10 @@ public class UsuariosService implements IUsuariosService {
         List<String> roles = userDetailsModel.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        UsuarioLoginResponse usuarioLoginResponse = UsuarioLoginResponse.builder()
+        return UsuarioLoginResponse.builder()
                 .token(jwt)
                 .email(userDetailsModel.getUsername())
                 .roles(roles).build();
-        return usuarioLoginResponse;
     }
 
     @Override
@@ -87,24 +86,24 @@ public class UsuariosService implements IUsuariosService {
             Set<Roles> roles = new HashSet<>();
             if (strRoles == null) {
                 Roles userRole = roleRepository.findByName(Role.ROLE_USUARIO)
-                        .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                 roles.add(userRole);
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
                         case "admin":
                             Roles adminRol = roleRepository.findByName(Role.ROLE_ADMIN)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(adminRol);
                             break;
                         case "tec":
                             Roles tecnicoRol = roleRepository.findByName(Role.ROLE_TECNICO)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(tecnicoRol);
                             break;
                         default:
                             Roles usuarioRol = roleRepository.findByName(Role.ROLE_USUARIO)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(usuarioRol);
                     }
                 });

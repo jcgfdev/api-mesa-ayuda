@@ -1,7 +1,7 @@
-package com.enyoi.apimesaayuda.security.controllers.services.impl;
+package com.enyoi.apimesaayuda.security.services.impl;
 
 import com.enyoi.apimesaayuda.base.exceptions.EmailException;
-import com.enyoi.apimesaayuda.security.controllers.services.IEmailService;
+import com.enyoi.apimesaayuda.security.services.IEmailService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

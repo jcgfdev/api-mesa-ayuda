@@ -1,6 +1,6 @@
-package com.enyoi.apimesaayuda.security.controllers.services.impl;
+package com.enyoi.apimesaayuda.security.services.impl;
 
-import com.enyoi.apimesaayuda.security.controllers.services.IBuildEmailService;
+import com.enyoi.apimesaayuda.security.services.IBuildEmailService;
 import org.springframework.stereotype.Service;
 
 @Service

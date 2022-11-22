@@ -1,8 +1,8 @@
-package com.enyoi.apimesaayuda.security.controllers.services.impl;
+package com.enyoi.apimesaayuda.security.services.impl;
 
 import com.enyoi.apimesaayuda.security.entities.ConfirmationToken;
 import com.enyoi.apimesaayuda.security.repositories.ConfirmationTokenRepository;
-import com.enyoi.apimesaayuda.security.controllers.services.IConfirmationTokenService;
+import com.enyoi.apimesaayuda.security.services.IConfirmationTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

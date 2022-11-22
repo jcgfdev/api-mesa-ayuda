@@ -1,4 +1,4 @@
-package com.enyoi.apimesaayuda.security.controllers.services.impl;
+package com.enyoi.apimesaayuda.security.services.impl;
 
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import com.enyoi.apimesaayuda.security.models.UserDetailsModel;

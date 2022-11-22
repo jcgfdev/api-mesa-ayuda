@@ -2,7 +2,6 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
@@ -95,11 +94,11 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/saveDependencia")
-    public ResponseEntity<DependenciasDTO> saveUser(@Valid @RequestBody DependenciasRequests DependenciasRequests, BindingResult bindingResult) {
+    public ResponseEntity<DependenciasDTO> saveUser(@Valid @RequestBody DependenciasRequests dependenciasRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<DependenciasDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.create(DependenciasRequests.getNombreDependencia()), HttpStatus.CREATED);
+            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.create(dependenciasRequests.getNombreDependencia()), HttpStatus.CREATED);
         }
     }
 

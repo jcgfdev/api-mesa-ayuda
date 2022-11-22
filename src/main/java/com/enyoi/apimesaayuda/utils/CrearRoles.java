@@ -2,7 +2,7 @@ package com.enyoi.apimesaayuda.utils;
 
 import com.enyoi.apimesaayuda.security.entities.Roles;
 import com.enyoi.apimesaayuda.security.enums.Role;
-import com.enyoi.apimesaayuda.security.services.IRolesService;
+import com.enyoi.apimesaayuda.security.controllers.services.IRolesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

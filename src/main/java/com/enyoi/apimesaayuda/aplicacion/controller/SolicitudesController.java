@@ -1,7 +1,5 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 
-
-import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.SolicitudesDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SolicitudesRequest;
@@ -165,6 +163,27 @@ public class SolicitudesController {
                                                                             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
         return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction), HttpStatus.OK);
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "data found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SolicitudesDTO.class))}),
+            @ApiResponse(responseCode = "401", description = "debe iniciar session",
+                    content = @Content),
+            @ApiResponse(responseCode = "403", description = "sin privilegios suficientes",
+                    content = @Content),
+            @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
+                    content = @Content)})
+    @Operation(security = {@SecurityRequirement(name = "bearer-key")})
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @GetMapping("/fechaFinalizado")
+    public ResponseEntity<Page<SolicitudesDTO>> findByFechaFinalizadoBetween(@RequestParam(value = "fechaInicio") Date fechaInicio,
+                                                                            @RequestParam(value = "fechaFin") Date fechaFin,
+                                                                            @RequestParam(name = "page", defaultValue = "0") int page,
+                                                                            @RequestParam(name = "size", defaultValue = "10") int size,
+                                                                            @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction), HttpStatus.OK);
+    }
 
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
@@ -202,11 +221,11 @@ public class SolicitudesController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/saveSolicitud")
-    public ResponseEntity<SolicitudesDTO> saveSolicitud(@Valid @RequestBody SolicitudesRequest SolicitudesRequest, BindingResult bindingResult) {
+    public ResponseEntity<SolicitudesDTO> saveSolicitud(@Valid @RequestBody SolicitudesRequest solicitudesRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.crear(SolicitudesRequest), HttpStatus.CREATED);
+            return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.crear(solicitudesRequest), HttpStatus.CREATED);
         }
     }
 

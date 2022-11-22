@@ -1,7 +1,6 @@
 package com.enyoi.apimesaayuda.aplicacion.services;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 
 import java.util.List;

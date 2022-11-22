@@ -61,7 +61,7 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-uno")
-    public ResponseEntity<TiposSolicitudDTO> ObtenerUno(@RequestParam("id") Long id) {
+    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("id") Long id) {
         return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findById(id), HttpStatus.OK);
     }
 

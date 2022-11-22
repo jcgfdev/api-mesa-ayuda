@@ -1,6 +1,5 @@
 package com.enyoi.apimesaayuda.security.payloads.requests;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;

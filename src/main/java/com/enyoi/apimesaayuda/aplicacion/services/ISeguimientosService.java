@@ -14,7 +14,6 @@ public interface ISeguimientosService {
 
     Page<SeguimientosDTO> findBySolicitudesId(Long solicitudesId, int page, int size, String columnFilter, Sort.Direction direction);
 
-
     SeguimientosDTO crear(SeguimientosRequest seguimientosRequest);
 
     SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest);

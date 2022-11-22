@@ -4,8 +4,6 @@ package com.enyoi.apimesaayuda.aplicacion.entities;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;

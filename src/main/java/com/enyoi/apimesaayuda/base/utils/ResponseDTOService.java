@@ -15,7 +15,7 @@ public class ResponseDTOService {
     }
 
     public ResponseEntity<?> response(Object data, HttpStatus status) {
-        ResponseDTO<?> responseDTO = new ResponseDTO<>(status.value(), status.getReasonPhrase());
+        ResponseDTO<?> responseDTO = new ResponseDTO<>(status.value(), status.getReasonPhrase(), data);
         return new ResponseEntity<>(responseDTO, status);
     }
 

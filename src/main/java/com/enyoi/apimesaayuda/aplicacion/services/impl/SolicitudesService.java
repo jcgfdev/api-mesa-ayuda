@@ -157,6 +157,7 @@ public class SolicitudesService implements ISolicitudesService {
             TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(solicitudesRequest.getTipoSolicitudId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudes.setTipoSolicitudId(tiposSolicitud);
+
             Dependencias dependencias = dependenciasRepository.findById(solicitudesRequest.getDependenciasId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudes.setDependenciasId(dependencias);

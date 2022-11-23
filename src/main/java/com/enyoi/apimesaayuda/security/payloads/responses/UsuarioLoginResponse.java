@@ -12,6 +12,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UsuarioLoginResponse {
+
+    private Long id;
     private String token;
     private String email;
     List<String> roles;

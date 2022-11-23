@@ -66,4 +66,17 @@ public class AuthController {
     public ResponseEntity<String> confirmToken(@RequestParam("token") String token) {
         return (ResponseEntity<String>) responseDTOService.response(userService.confirmarToken(token), HttpStatus.ACCEPTED);
     }
+
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Confirmacion de correo exitosa",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al confirmar correo",
+                    content = @Content)})
+    @GetMapping("/activarUsuario")
+    public ResponseEntity<String> activarUsuarioid(@RequestParam(name = "id")Long userId) {
+        return (ResponseEntity<String>) responseDTOService.response(userService.activarUsuarioId(userId), HttpStatus.ACCEPTED);
+    }
+
+
 }

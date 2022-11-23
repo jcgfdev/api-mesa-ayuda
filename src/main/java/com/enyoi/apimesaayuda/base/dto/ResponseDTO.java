@@ -15,5 +15,5 @@ public class ResponseDTO<T> {
     private T data;
 
     public ResponseDTO(int status, String message){
-    }
+   }
 }

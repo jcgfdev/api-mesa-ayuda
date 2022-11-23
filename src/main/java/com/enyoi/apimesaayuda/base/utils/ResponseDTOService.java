@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.base.utils;
 
+
 import com.enyoi.apimesaayuda.base.dto.ResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,4 +18,6 @@ public class ResponseDTOService {
         ResponseDTO<?> responseDTO = new ResponseDTO<>(status.value(), status.getReasonPhrase(), data);
         return new ResponseEntity<>(responseDTO, status);
     }
+
+
 }

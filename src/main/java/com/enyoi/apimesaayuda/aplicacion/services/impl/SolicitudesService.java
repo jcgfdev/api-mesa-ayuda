@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -58,8 +59,7 @@ public class SolicitudesService implements ISolicitudesService {
         Solicitudes solicitudes;
         if (solicitudesOptional.isPresent()) {
             solicitudes = solicitudesOptional.get();
-            SolicitudesDTO solicitudesDTO = modelMapper.map(solicitudes, SolicitudesDTO.class);
-            return solicitudesDTO;
+            return modelMapper.map(solicitudes, SolicitudesDTO.class);
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
@@ -122,7 +122,14 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
-        return null;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
+        List<SolicitudesDTO> list = solicitudesRepository.findByFechaFinalizadoBetween(fechaInicio, fechaFin, pageable)
+                .stream()
+                .map(solicitudes -> modelMapper.map(solicitudes, SolicitudesDTO.class))
+                .collect(Collectors.toList());
+        final int start = (int) pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), list.size());
+        return new PageImpl<>(list.subList(start, end), pageable, list.size());
     }
 
     @Override
@@ -171,7 +178,7 @@ public class SolicitudesService implements ISolicitudesService {
     @Override
     public SolicitudesDTO actualizar(ActualizarSolicitudesRequest actualizarSolicitudesRequest) {
         Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(actualizarSolicitudesRequest.getCodigo());
-        if(solicitudesOptional.isPresent()){
+        if (solicitudesOptional.isPresent()) {
             Solicitudes solicitudesGuardar = solicitudesOptional.get();
             solicitudesGuardar.setCodigo(actualizarSolicitudesRequest.getCodigo());
             solicitudesGuardar.setDescripcion(actualizarSolicitudesRequest.getDescripcion());
@@ -179,18 +186,20 @@ public class SolicitudesService implements ISolicitudesService {
             solicitudesGuardar.setFechaFinalizado(actualizarSolicitudesRequest.getFechaFinalizado());
             solicitudesGuardar.setTitulo(actualizarSolicitudesRequest.getTitulo());
             Dependencias dependencias = dependenciasRepository.findById(actualizarSolicitudesRequest.getDependenciasId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            solicitudesGuardar.setDependenciasId(dependencias);
             EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(actualizarSolicitudesRequest.getEstadoId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            solicitudesGuardar.setEstadoId(estadosSolicitud);
             Usuarios usuarios = usuariosRepository.findById(actualizarSolicitudesRequest.getSolicitanteId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            solicitudesGuardar.setSolicitanteId(usuarios);
             TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(actualizarSolicitudesRequest.getTipoSolicitudId())
-                    .orElseThrow(()-> new NotDataFound(NOEXISTENDATOS));
-
+                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+            solicitudesGuardar.setTipoSolicitudId(tiposSolicitud);
             solicitudesGuardar = solicitudesRepository.save(solicitudesGuardar);
             return modelMapper.map(solicitudesGuardar, SolicitudesDTO.class);
-
-        }else {
+        } else {
             throw new NotDataFound("codigo de solicitud no existe");
         }
     }
@@ -198,11 +207,14 @@ public class SolicitudesService implements ISolicitudesService {
     @Override
     public String eliminar(Long id) {
         Optional<Solicitudes> solicitudesOptional = Optional.ofNullable(solicitudesRepository.findById(id)
-                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: "+ id ) ));
+                .orElseThrow(() -> new NotDataFound(" Solicitud No existe: " + id)));
+        if (solicitudesOptional.isPresent()) {
+            solicitudesRepository.deleteById(id);
 
-        solicitudesRepository.deleteById(id);
-
-        return solicitudesOptional.get() + "Eliminado con Exito";
+            return modelMapper.map(solicitudesOptional.get(), SolicitudesDTO.class).getId() + "Eliminado con Exito";
+        } else {
+            throw new NotDataFound(NOEXISTENDATOS);
+        }
     }
 
 }

@@ -1,8 +1,7 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
-import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
-import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
@@ -20,7 +19,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Security;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -63,7 +61,7 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-uno")
-    public ResponseEntity<TiposSolicitudDTO> ObtenerUno(@RequestParam("id") Long id) {
+    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("id") Long id) {
         return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findById(id), HttpStatus.OK);
     }
 
@@ -114,7 +112,7 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PutMapping("/update-tipo-solicitud")
-    public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody TiposSolicitudRequests tiposSolicitudRequests, BindingResult bindingResult) {
+    public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody TiposSolicitudRequest tiposSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {

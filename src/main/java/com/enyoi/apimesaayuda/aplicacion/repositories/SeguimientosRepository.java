@@ -23,4 +23,5 @@ public interface SeguimientosRepository extends JpaRepository<Seguimientos, Long
 
     Page<Seguimientos> findByResponsableId(Usuarios responsableId, Pageable pageable);
 
+    Optional<Seguimientos> findBySolicitudesId(long solicitudesId);
 }

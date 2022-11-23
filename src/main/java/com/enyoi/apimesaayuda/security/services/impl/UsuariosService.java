@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.security.services.impl;
 
+import com.enyoi.apimesaayuda.base.exceptions.EmailConfirmado;
 import com.enyoi.apimesaayuda.base.exceptions.EmailException;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
@@ -30,10 +31,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,11 +64,14 @@ public class UsuariosService implements IUsuariosService {
         List<String> roles = userDetailsModel.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
-        UsuarioLoginResponse usuarioLoginResponse = UsuarioLoginResponse.builder()
+        Usuarios usuarios = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new NotDataFound("Usuario no encontrado"));
+        return UsuarioLoginResponse.builder()
+                .id(usuarios.getId())
                 .token(jwt)
                 .email(userDetailsModel.getUsername())
                 .roles(roles).build();
-        return usuarioLoginResponse;
+
     }
 
     @Override
@@ -125,7 +126,7 @@ public class UsuariosService implements IUsuariosService {
         }
     }
 
-    @Override
+       @Override
     public String confirmarToken(String token) {
         ConfirmationToken confirmationToken = confirmationTokenService.findConfirmationTokenByToken(token)
                 .orElseThrow(() -> new NotDataFound("token no existe"));
@@ -147,6 +148,35 @@ public class UsuariosService implements IUsuariosService {
 
     @Override
     public void activarUsuarioEmail(String email) {
+
         userRepository.activarUsuario(email);
     }
+
+    @Override
+    public String activarUsuarioId(Long userId) {
+        Usuarios usuarios = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
+        if (!usuarios.getActivado()) {
+            String newToken = UUID.randomUUID().toString();
+            ConfirmationToken confirmationToken = new ConfirmationToken();
+            confirmationToken.setToken(newToken);
+            confirmationToken.setCreatedAt(LocalDateTime.now());
+            confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+
+            confirmationToken.setUser(usuarios);
+            confirmationTokenService.saveConfirmationToken(confirmationToken);
+            String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken?token=" + newToken;
+            //String nombre = usuarios.getNombres() + " " + usuarios.getApellidos();
+            emailService.enviar(usuarios.getEmail(), buildEmailService.buildEmail(usuarios.getNombres(), link));
+            return "Email enviado para activar nuevamente al usuario: ";
+        }else{
+            throw new EmailConfirmado("");
+        }
+
+    }
+
+
 }
+
+
+

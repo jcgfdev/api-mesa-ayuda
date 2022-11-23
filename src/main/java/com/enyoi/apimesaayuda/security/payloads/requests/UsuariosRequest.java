@@ -1,9 +1,7 @@
 package com.enyoi.apimesaayuda.security.payloads.requests;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
+
+import lombok.*;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -13,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class UsuariosRequest {
+
     @NotBlank
     @Size(max = 120)
     @NonNull
@@ -31,4 +30,5 @@ public class UsuariosRequest {
     @Size(max = 120)
     @NonNull
     private String clave;
+
 }

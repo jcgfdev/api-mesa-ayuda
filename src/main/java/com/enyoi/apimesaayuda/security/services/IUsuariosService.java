@@ -13,4 +13,9 @@ public interface IUsuariosService {
     String confirmarToken(String token);
 
     void activarUsuarioEmail(String email);
+
+    String activarUsuarioId(Long userId);
+
+
+
 }

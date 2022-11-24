@@ -78,5 +78,16 @@ public class AuthController {
         return (ResponseEntity<String>) responseDTOService.response(userService.activarUsuarioId(userId), HttpStatus.ACCEPTED);
     }
 
-
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Confirmacion de correo exitosa",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UsuariosDTO.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al confirmar correo",
+                    content = @Content)})
+    @GetMapping("/cambiarClave")
+    public ResponseEntity<UsuariosDTO> cambiarClave(@RequestParam(name = "id")Long userId,
+                                                    @RequestParam(name = "newClave")String newClave,
+                                                    @RequestParam(name = "RenewClave")String RenewClave   ) {
+        return (ResponseEntity<UsuariosDTO>) responseDTOService.response(userService.cambiarClave(userId, newClave, RenewClave), HttpStatus.ACCEPTED);
+    }
 }

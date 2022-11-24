@@ -187,6 +187,16 @@ public class UsuariosService implements IUsuariosService {
 
     }
 
+    @Override
+    public String recuperarClaveEmail(String email) {
+        Usuarios usuarios = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
+        String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken";
+        emailService.enviar(usuarios.getEmail(), buildEmailService.recuperarClaveEmail(usuarios.getNombres(), link));
+        return "Email enviado para Recuperar contraseña: ";
+    }
+
+
 }
 
 

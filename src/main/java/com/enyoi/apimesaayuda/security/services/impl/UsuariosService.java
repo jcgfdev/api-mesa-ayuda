@@ -175,6 +175,17 @@ public class UsuariosService implements IUsuariosService {
 
     }
 
+    public UsuariosDTO cambiarClave(Long userId, String newClave, String ReNewClave){
+        Usuarios usuarios = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
+        if (Objects.equals(newClave, ReNewClave)) {
+            usuarios.setClave(encoder.encode(newClave));
+            return modelMapper.map(userRepository.save(usuarios), UsuariosDTO.class);
+             }else{
+            throw new NotDataFound("--> La Clave no Existe");
+        }
+
+    }
 
 }
 

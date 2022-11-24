@@ -90,4 +90,15 @@ public class AuthController {
                                                     @RequestParam(name = "RenewClave")String RenewClave   ) {
         return (ResponseEntity<UsuariosDTO>) responseDTOService.response(userService.cambiarClave(userId, newClave, RenewClave), HttpStatus.ACCEPTED);
     }
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "202", description = "Confirmacion de correo exitosa",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = String.class))}),
+            @ApiResponse(responseCode = "500", description = "Error al confirmar correo",
+                    content = @Content)})
+    @GetMapping("/recuperarClaveEmail")
+    public ResponseEntity<String> recuperarClaveEmail(@RequestParam(name = "email")String email  ) {
+        return (ResponseEntity<String>) responseDTOService.response(userService.recuperarClaveEmail(email), HttpStatus.ACCEPTED);
+    }
+
 }

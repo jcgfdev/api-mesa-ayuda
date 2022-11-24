@@ -27,7 +27,7 @@ import java.util.Date;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/Solicitudes")
+@RequestMapping("/solicitudes")
 @RequiredArgsConstructor
 public class SolicitudesController {
     private final ResponseDTOService responseDTOService;

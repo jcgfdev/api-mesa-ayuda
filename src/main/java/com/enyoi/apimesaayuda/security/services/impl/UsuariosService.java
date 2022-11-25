@@ -49,6 +49,7 @@ public class UsuariosService implements IUsuariosService {
     private final JwtUtils jwtUtils;
 
     private static final String ROLEEXCEPTION = "Error: Role is not found.";
+    private static final String USUARIONOEXISTE= "El usuarion no exciste";
     private final IConfirmationTokenService confirmationTokenService;
     private final IEmailService emailService;
 
@@ -88,24 +89,24 @@ public class UsuariosService implements IUsuariosService {
             Set<Roles> roles = new HashSet<>();
             if (strRoles == null) {
                 Roles userRole = roleRepository.findByName(Role.ROLE_USUARIO)
-                        .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                 roles.add(userRole);
             } else {
                 strRoles.forEach(role -> {
                     switch (role) {
                         case "admin":
                             Roles adminRol = roleRepository.findByName(Role.ROLE_ADMIN)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(adminRol);
                             break;
                         case "tec":
                             Roles tecnicoRol = roleRepository.findByName(Role.ROLE_TECNICO)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(tecnicoRol);
                             break;
                         default:
                             Roles usuarioRol = roleRepository.findByName(Role.ROLE_USUARIO)
-                                    .orElseThrow(() -> new RuntimeException("Error: rol no existe"));
+                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
                             roles.add(usuarioRol);
                     }
                 });
@@ -155,7 +156,7 @@ public class UsuariosService implements IUsuariosService {
     @Override
     public String activarUsuarioId(Long userId) {
         Usuarios usuarios = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
+                .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
         if (!usuarios.getActivado()) {
             String newToken = UUID.randomUUID().toString();
             ConfirmationToken confirmationToken = new ConfirmationToken();
@@ -177,7 +178,7 @@ public class UsuariosService implements IUsuariosService {
 
     public UsuariosDTO cambiarClave(Long userId, String newClave, String ReNewClave){
         Usuarios usuarios = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
+                .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
         if (Objects.equals(newClave, ReNewClave)) {
             usuarios.setClave(encoder.encode(newClave));
             return modelMapper.map(userRepository.save(usuarios), UsuariosDTO.class);
@@ -188,11 +189,11 @@ public class UsuariosService implements IUsuariosService {
     }
 
     @Override
-    public String recuperarClaveEmail(String email) {
+    public String recuperarClaveEmail(String email, String url) {
         Usuarios usuarios = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalStateException("El usuario no Existe"));
-        String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken";
-        emailService.enviar(usuarios.getEmail(), buildEmailService.recuperarClaveEmail(usuarios.getNombres(), link));
+                .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
+        //String link = "http://localhost:8080/api-mesa-ayuda/auth/recuperarClaveEmail";
+        emailService.enviar(usuarios.getEmail(), buildEmailService.recuperarClaveEmail(usuarios.getNombres(), url));
         return "Email enviado para Recuperar contraseña: ";
     }
 

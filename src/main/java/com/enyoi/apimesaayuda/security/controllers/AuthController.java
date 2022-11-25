@@ -97,8 +97,9 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Error al confirmar correo",
                     content = @Content)})
     @GetMapping("/recuperarClaveEmail")
-    public ResponseEntity<String> recuperarClaveEmail(@RequestParam(name = "email")String email  ) {
-        return (ResponseEntity<String>) responseDTOService.response(userService.recuperarClaveEmail(email), HttpStatus.ACCEPTED);
+    public ResponseEntity<String> recuperarClaveEmail(@RequestParam(name = "email")String email,
+                                                      @RequestParam(name = "url")String url) {
+        return (ResponseEntity<String>) responseDTOService.response(userService.recuperarClaveEmail(email, url), HttpStatus.ACCEPTED);
     }
 
 }

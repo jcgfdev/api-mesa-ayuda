@@ -27,7 +27,7 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/Seguimientos")
+@RequestMapping("/seguimientos")
 @RequiredArgsConstructor
 public class SeguimientoController {
 

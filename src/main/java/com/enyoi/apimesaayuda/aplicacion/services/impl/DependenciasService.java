@@ -2,17 +2,21 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
+import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsDependencias;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearDependenciasRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import com.enyoi.apimesaayuda.aplicacion.repositories.DependenciasRepository;
+import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogsDependenciasRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
+import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +25,7 @@ import java.util.Optional;
 public class DependenciasService implements IDependenciasService {
     //Utilidades
     private final ModelMapper modelMapper;
+    private final LogsDependenciasRepository logsDependenciasRepository;
     private static final String NOEXISTENDATOS = "No existen datos";
 
     //Repositorios
@@ -31,10 +36,10 @@ public class DependenciasService implements IDependenciasService {
         List<Dependencias> dependenciasList = dependenciasRepository.findAll();
         List<DependenciasDTO> dependenciasDTOList = new ArrayList<>();
 
-            dependenciasList.forEach(dependencia -> {
-                DependenciasDTO dependenciasDTO = modelMapper.map(dependencia, DependenciasDTO.class);
-                dependenciasDTOList.add(dependenciasDTO);
-            });
+        dependenciasList.forEach(dependencia -> {
+            DependenciasDTO dependenciasDTO = modelMapper.map(dependencia, DependenciasDTO.class);
+            dependenciasDTOList.add(dependenciasDTO);
+        });
 
         return dependenciasDTOList;
     }
@@ -64,14 +69,19 @@ public class DependenciasService implements IDependenciasService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public DependenciasDTO create(String nombreDependencia) {
-        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findByNombreDependencia(nombreDependencia);
+    public DependenciasDTO create(CrearDependenciasRequest crearDependenciasRequest) {
+        Optional<Dependencias> dependenciasOptional = dependenciasRepository.findByNombreDependencia(crearDependenciasRequest.getNombreDependencia());
         if (dependenciasOptional.isPresent()) {
             throw new AlreadyExists("dependencia ya existe");
         } else {
             Dependencias dependencias = new Dependencias();
-            dependencias.setNombreDependencia(nombreDependencia);
+            dependencias.setNombreDependencia(crearDependenciasRequest.getNombreDependencia());
+            LogsDependencias logsDependencias = LogsDependencias.builder()
+                    .usuario(crearDependenciasRequest.getUsuario())
+                    .acciones(Acciones.CREATED)
+                    .dependencias(dependencias.getNombreDependencia())
+                    .fechalog(new Date()).build();
+            logsDependenciasRepository.save(logsDependencias);
             return modelMapper.map(dependenciasRepository.save(dependencias), DependenciasDTO.class);
         }
     }
@@ -83,15 +93,29 @@ public class DependenciasService implements IDependenciasService {
             Dependencias dependeciaGuardar = dependenciasOptional.get();
             dependeciaGuardar.setNombreDependencia(dependenciasRequests.getNombreDependencia());
             dependeciaGuardar = dependenciasRepository.save(dependeciaGuardar);
-            return modelMapper.map(dependeciaGuardar,DependenciasDTO.class);
+            LogsDependencias logsDependencias = LogsDependencias.builder()
+                    .usuario(dependenciasRequests.getUsuario())
+                    .acciones(Acciones.UPDATE)
+                    .dependencias(dependenciasRequests.getNombreDependencia())
+                    .fechalog(new Date()).build();
+            logsDependenciasRepository.save(logsDependencias);
+            return modelMapper.map(dependeciaGuardar, DependenciasDTO.class);
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
     }
 
     @Override
-    public String delete(Long id) {
-        dependenciasRepository.deleteById(id);
-        return "Registro eliminado";
+    public String delete(Long id, String usuarios) {
+        Dependencias dependenciasOptional = dependenciasRepository.findById(id)
+                .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+        dependenciasRepository.delete(dependenciasOptional);
+            LogsDependencias logsDependencias = LogsDependencias.builder()
+                    .usuario(usuarios)
+                    .acciones(Acciones.DELETE)
+                    .dependencias(dependenciasOptional.getNombreDependencia())
+                    .fechalog(new Date()).build();
+            logsDependenciasRepository.save(logsDependencias);
+            return dependenciasOptional.getNombreDependencia() + "dato no encontrado";
     }
 }

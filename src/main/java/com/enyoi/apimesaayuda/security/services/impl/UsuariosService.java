@@ -1,5 +1,6 @@
 package com.enyoi.apimesaayuda.security.services.impl;
 
+import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.EmailConfirmado;
 import com.enyoi.apimesaayuda.base.exceptions.EmailException;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
@@ -9,6 +10,7 @@ import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import com.enyoi.apimesaayuda.security.entities.ConfirmationToken;
 import com.enyoi.apimesaayuda.security.entities.Roles;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import com.enyoi.apimesaayuda.security.entities.logs.LogsLogin;
 import com.enyoi.apimesaayuda.security.enums.Role;
 import com.enyoi.apimesaayuda.security.models.UserDetailsModel;
 import com.enyoi.apimesaayuda.security.payloads.requests.LoginRequest;
@@ -16,6 +18,7 @@ import com.enyoi.apimesaayuda.security.payloads.requests.UsuariosRequest;
 import com.enyoi.apimesaayuda.security.payloads.responses.UsuarioLoginResponse;
 import com.enyoi.apimesaayuda.security.repositories.RolesRepository;
 import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
+import com.enyoi.apimesaayuda.security.repositories.logs.LogsLoginRepository;
 import com.enyoi.apimesaayuda.security.services.IBuildEmailService;
 import com.enyoi.apimesaayuda.security.services.IConfirmationTokenService;
 import com.enyoi.apimesaayuda.security.services.IEmailService;
@@ -42,6 +45,8 @@ public class UsuariosService implements IUsuariosService {
 
     private final UsuariosRepository userRepository;
 
+    private final LogsLoginRepository logsLoginRepository;
+
     private final RolesRepository roleRepository;
 
     private final PasswordEncoder encoder;
@@ -67,6 +72,11 @@ public class UsuariosService implements IUsuariosService {
                 .collect(Collectors.toList());
         Usuarios usuarios = userRepository.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new NotDataFound("Usuario no encontrado"));
+        LogsLogin logsLogin = LogsLogin.builder()
+                .acciones(Acciones.LOGEAR)
+                .usuario(loginRequest.getEmail())
+                .fechalog(new Date()).build();
+        logsLoginRepository.save(logsLogin);
         return UsuarioLoginResponse.builder()
                 .id(usuarios.getId())
                 .token(jwt)

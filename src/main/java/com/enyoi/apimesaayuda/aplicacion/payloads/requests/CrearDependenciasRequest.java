@@ -7,11 +7,11 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Getter
 @Setter
-public class DependenciasRequests {
-    @NonNull
-    private Long id;
+@Getter
+public class CrearDependenciasRequest {
+
+
     @NonNull
     @NotBlank
     private String nombreDependencia;
@@ -19,5 +19,4 @@ public class DependenciasRequests {
     @NotBlank
     @Email
     private String usuario;
-
 }

@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.DependenciasDTO;
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearDependenciasRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import com.enyoi.apimesaayuda.aplicacion.services.IDependenciasService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
@@ -60,7 +61,7 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtenerUno")
-    public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("id") long id) {
+    public ResponseEntity<DependenciasDTO> obtenerUnoId(@RequestParam("id") long id) {
         return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findById(id), HttpStatus.OK);
     }
 
@@ -77,7 +78,7 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtenerUnoporNombre")
-    public ResponseEntity<DependenciasDTO> obtenerUno(@RequestParam("nombre") String nombre) {
+    public ResponseEntity<DependenciasDTO> obtenerporNombre(@RequestParam("nombre") String nombre) {
         return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findByNombreDependencia(nombre), HttpStatus.OK);
     }
 
@@ -94,11 +95,11 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/saveDependencia")
-    public ResponseEntity<DependenciasDTO> saveUser(@Valid @RequestBody DependenciasRequests dependenciasRequests, BindingResult bindingResult) {
+    public ResponseEntity<DependenciasDTO> create(@Valid @RequestBody CrearDependenciasRequest crearDependenciasRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<DependenciasDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
-            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.create(dependenciasRequests.getNombreDependencia()), HttpStatus.CREATED);
+            return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.create(crearDependenciasRequest), HttpStatus.CREATED);
         }
     }
 
@@ -136,7 +137,8 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/eliminarUno")
-    public ResponseEntity<String> eliminarUno(@RequestParam("id") long id) {
-        return (ResponseEntity<String>) responseDTOService.response(dependenciasService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> eliminarUno(@RequestParam("id") long id,
+                                              @RequestParam("usuario") String usuarios) {
+        return (ResponseEntity<String>) responseDTOService.response(dependenciasService.delete(id, usuarios), HttpStatus.OK);
     }
 }

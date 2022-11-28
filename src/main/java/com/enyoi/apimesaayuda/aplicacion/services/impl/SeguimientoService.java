@@ -3,7 +3,6 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.*;
-import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsDependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsSeguimientos;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;

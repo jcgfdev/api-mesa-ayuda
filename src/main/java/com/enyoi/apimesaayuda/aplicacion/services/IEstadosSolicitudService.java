@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.services;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearEstadosSolicitudRequest;
 
 import java.util.List;
 /*
@@ -17,11 +18,11 @@ public interface IEstadosSolicitudService {
     EstadosSolicitudDTO findByNombreEstado(String nombreEstado);
 
 
-    EstadosSolicitudDTO create(String nombreEstado);
+    EstadosSolicitudDTO create(CrearEstadosSolicitudRequest crearEstadosSolicitudRequest);
 
     EstadosSolicitudDTO update(ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests);
 
-    String delete(Long id);
+    String delete(Long id, String usuarios);
 
 
 

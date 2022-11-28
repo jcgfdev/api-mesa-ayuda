@@ -11,3 +11,4 @@ public class EstadosSolicitudDTO {
     private Long id;
     private String nombreEstado;
 }
+

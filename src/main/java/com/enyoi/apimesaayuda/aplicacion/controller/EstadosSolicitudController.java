@@ -2,6 +2,7 @@ package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearEstadosSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
 
@@ -47,7 +48,7 @@ public class EstadosSolicitudController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
-    @GetMapping("/obtener-todos-estados")
+    @GetMapping("/obtener-lista-estados")
     public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos() {
         return (ResponseEntity<List<EstadosSolicitudDTO>>) responseDTOService.response(estadosSolicitudService.findAll(), HttpStatus.OK);
     }
@@ -64,7 +65,7 @@ public class EstadosSolicitudController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
-    @GetMapping("/obtener-todos-id")
+    @GetMapping("/obtener-por-id")
     public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id), HttpStatus.OK);
     }
@@ -81,7 +82,7 @@ public class EstadosSolicitudController {
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') ")
-    @GetMapping("/obtener-nombre-estados")
+    @GetMapping("/obtener-por-nombre-estados")
     public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
     }
@@ -96,14 +97,15 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
-    @PostMapping("/crearSolicitud")
-    public ResponseEntity<EstadosSolicitudDTO> create(@RequestParam("nombreEstado")String nombreEstado) {
-        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(nombreEstado), HttpStatus.CREATED);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PostMapping("/crearEstado")
+    public ResponseEntity<EstadosSolicitudDTO> create(@Valid @RequestBody CrearEstadosSolicitudRequest crearEstadosSolicitudRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.create(crearEstadosSolicitudRequest), HttpStatus.CREATED);
+        }
     }
-
-
-
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
                     content = {@Content(mediaType = "application/json",
@@ -115,7 +117,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PutMapping("/update-estado")
     public ResponseEntity<EstadosSolicitudDTO> update(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -135,10 +137,11 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @DeleteMapping("/delete-estado")
-    public ResponseEntity<String> delete(@RequestParam("id") long id){
-        return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id,
+                                         @RequestParam("usuario") String usuarios){
+        return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id, usuarios), HttpStatus.OK);
 
     }
 

@@ -2,9 +2,13 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.EstadosSolicitudDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsEstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarEstadosSolicitudRequests;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearEstadosSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
+import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogsEstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
+import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +27,8 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     private final ModelMapper modelMapper;
 
     private final EstadosSolicitudRepository estadosSolicitudRepository;
+
+    private final LogsEstadosSolicitudRepository logsEstadosSolicitudRepository;
     /*
      **@Auth: D David Galeano Puche
      */
@@ -74,14 +81,19 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      **@Auth: D David Galeano Puche
      */
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public EstadosSolicitudDTO create(String nombreEstado) {
-        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
+    public EstadosSolicitudDTO create(CrearEstadosSolicitudRequest crearEstadosSolicitudRequest) {
+        Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(crearEstadosSolicitudRequest.getNombreEstado());
         if (estadosSolicitudOptional.isPresent()) {
             throw new AlreadyExists("nombre estado solicitud ya existe. ");
         } else {
             EstadosSolicitud estadosSolicitud = new EstadosSolicitud();
-            estadosSolicitud.setNombreEstado(nombreEstado);
+            estadosSolicitud.setNombreEstado(crearEstadosSolicitudRequest.getNombreEstado());
+            LogsEstadosSolicitud logsEstadosSolicitud = LogsEstadosSolicitud.builder()
+                    .usuario(crearEstadosSolicitudRequest.getUsuario())
+                    .acciones(Acciones.CREATED)
+                    .estadosSolicitud(estadosSolicitud.getNombreEstado())
+                    .fechalog(new Date()).build();
+            logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
             return modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
         }
     }
@@ -96,6 +108,13 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             updateEstado.setNombreEstado(actualizarEstadosSolicitudRequests.getNombreEstado() != null
                     ? actualizarEstadosSolicitudRequests.getNombreEstado()
                     : updateEstado.getNombreEstado());
+            LogsEstadosSolicitud logsEstadosSolicitud = LogsEstadosSolicitud.builder()
+                    .usuario(actualizarEstadosSolicitudRequests.getUsuario())
+                    .acciones(Acciones.UPDATE)
+                    .estadosSolicitud(updateEstado.getNombreEstado())
+                    .fechalog(new Date())
+                    .build();
+            logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
             return modelMapper.map(estadosSolicitudRepository.save(updateEstado), EstadosSolicitudDTO.class);
         } else {
             throw new NotDataFound("Solicitud no existe");
@@ -105,12 +124,17 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      **@Auth: D David Galeano Puche
      */
     @Override
-    public String delete (Long id){
+    public String delete (Long id, String usuarios){
         Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
                 .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) ));
         if (estadosSolicitudOptional.isPresent()){
             estadosSolicitudRepository.deleteById(id);
-
+            LogsEstadosSolicitud logsEstadosSolicitud =LogsEstadosSolicitud.builder()
+                    .usuario(usuarios)
+                    .acciones(Acciones.DELETE)
+                    .estadosSolicitud(estadosSolicitudOptional.get().getNombreEstado())
+                    .fechalog(new Date()).build();
+            logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
             return modelMapper.map(estadosSolicitudOptional.get(), EstadosSolicitudDTO.class).getNombreEstado() + "Eliminado con Exito";
         }else {
             throw new NotDataFound("Estado no existe");

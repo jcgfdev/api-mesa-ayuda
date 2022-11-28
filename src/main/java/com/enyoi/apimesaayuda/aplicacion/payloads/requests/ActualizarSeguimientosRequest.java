@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -29,5 +30,9 @@ public class ActualizarSeguimientosRequest {
 
     @NonNull
     private Long responsableId;
+    @NonNull
+    @NotBlank
+    @Email
+    private String usuario;
 
 }

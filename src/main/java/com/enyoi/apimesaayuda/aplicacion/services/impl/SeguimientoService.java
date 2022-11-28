@@ -3,10 +3,14 @@ package com.enyoi.apimesaayuda.aplicacion.services.impl;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.SeguimientosDTO;
 import com.enyoi.apimesaayuda.aplicacion.entities.*;
+import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsDependencias;
+import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsSeguimientos;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SeguimientosRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.*;
+import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogSeguimientosRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
+import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
@@ -17,6 +21,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +38,7 @@ public class SeguimientoService implements ISeguimientosService {
     private final SeguimientosRepository seguimientosRepository;
     private final SolicitudesRepository solicitudesRepository;
     private final UsuariosRepository usuariosRepository;
+    private final LogSeguimientosRepository logsSeguimientosRository;
 
     @Override
     public List<SeguimientosDTO> findAll() {
@@ -78,7 +84,12 @@ public class SeguimientoService implements ISeguimientosService {
         Usuarios usuarios = usuariosRepository.findById(seguimientosRequest.getResponsableId())
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
         seguimientos.setResponsableId(usuarios);
-
+        LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
+                .usuario(seguimientosRequest.getUsuario())
+                .acciones(Acciones.CREATED)
+                .seguimientos(seguimientosRequest.getDescripcion())
+                .fechalog(new Date()).build();
+        logsSeguimientosRository.save(logsSeguimientos);
         return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
 
     }
@@ -99,6 +110,12 @@ public class SeguimientoService implements ISeguimientosService {
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             seguimientosGuardar.setResponsableId(usuarios);
             seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
+            LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
+                    .usuario(actualizarSeguimientosRequest.getUsuario())
+                    .acciones(Acciones.CREATED)
+                    .seguimientos(actualizarSeguimientosRequest.getDescripcion())
+                    .fechalog(new Date()).build();
+            logsSeguimientosRository.save(logsSeguimientos);
             return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
         } else {
             throw new NotDataFound("Id de seguimiento no existe");
@@ -107,12 +124,17 @@ public class SeguimientoService implements ISeguimientosService {
     }
 
     @Override
-    public java.lang.String delete(Long id) {
+    public java.lang.String delete(Long id, String usuarios) {
         Optional<Seguimientos> seguimientosOptional = Optional.ofNullable(seguimientosRepository.findById(id))
                 .orElseThrow(() -> new NotDataFound("No existe el estado: " + id));
         if (seguimientosOptional.isPresent()) {
             seguimientosRepository.deleteById(id);
-
+            LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
+                    .usuario(usuarios)
+                    .acciones(Acciones.CREATED)
+                    .seguimientos(seguimientosOptional.get().getDescripcion())
+                    .fechalog(new Date()).build();
+            logsSeguimientosRository.save(logsSeguimientos);
             return modelMapper.map(seguimientosOptional.get(), SeguimientosDTO.class).getId() + "Eliminado con Exito";
         } else {
             throw new NotDataFound(NOEXISTENDATOS);

@@ -18,7 +18,7 @@ public interface ISeguimientosService {
 
     SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest);
 
-    String delete(Long id);
+    String delete(Long id, String usuarios);
 
 
 }

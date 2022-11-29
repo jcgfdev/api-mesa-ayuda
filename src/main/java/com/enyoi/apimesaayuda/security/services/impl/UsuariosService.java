@@ -177,7 +177,6 @@ public class UsuariosService implements IUsuariosService {
             confirmationToken.setUser(usuarios);
             confirmationTokenService.saveConfirmationToken(confirmationToken);
             String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken?token=" + newToken;
-            //String nombre = usuarios.getNombres() + " " + usuarios.getApellidos();
             emailService.enviar(usuarios.getEmail(), buildEmailService.buildEmail(usuarios.getNombres(), link));
             return "Email enviado para activar nuevamente al usuario: ";
         }else{
@@ -186,10 +185,10 @@ public class UsuariosService implements IUsuariosService {
 
     }
 
-    public UsuariosDTO cambiarClave(Long userId, String newClave, String ReNewClave){
+    public UsuariosDTO cambiarClave(Long userId, String newClave, String reNewClave){
         Usuarios usuarios = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
-        if (Objects.equals(newClave, ReNewClave)) {
+        if (Objects.equals(newClave, reNewClave)) {
             usuarios.setClave(encoder.encode(newClave));
             return modelMapper.map(userRepository.save(usuarios), UsuariosDTO.class);
              }else{
@@ -202,7 +201,6 @@ public class UsuariosService implements IUsuariosService {
     public String recuperarClaveEmail(String email, String url) {
         Usuarios usuarios = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
-        //String link = "http://localhost:8080/api-mesa-ayuda/auth/recuperarClaveEmail";
         emailService.enviar(usuarios.getEmail(), buildEmailService.recuperarClaveEmail(usuarios.getNombres(), url));
         return "Email enviado para Recuperar contraseña: ";
     }

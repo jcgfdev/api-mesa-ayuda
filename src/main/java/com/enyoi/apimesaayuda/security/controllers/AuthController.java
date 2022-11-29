@@ -87,8 +87,8 @@ public class AuthController {
     @GetMapping("/cambiarClave")
     public ResponseEntity<UsuariosDTO> cambiarClave(@RequestParam(name = "id")Long userId,
                                                     @RequestParam(name = "newClave")String newClave,
-                                                    @RequestParam(name = "RenewClave")String RenewClave   ) {
-        return (ResponseEntity<UsuariosDTO>) responseDTOService.response(userService.cambiarClave(userId, newClave, RenewClave), HttpStatus.ACCEPTED);
+                                                    @RequestParam(name = "RenewClave")String renewClave   ) {
+        return (ResponseEntity<UsuariosDTO>) responseDTOService.response(userService.cambiarClave(userId, newClave, renewClave), HttpStatus.ACCEPTED);
     }
     @ApiResponses(value = {
             @ApiResponse(responseCode = "202", description = "Confirmacion de correo exitosa",

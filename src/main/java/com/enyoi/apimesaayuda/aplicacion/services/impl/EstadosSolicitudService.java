@@ -10,25 +10,35 @@ import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogsEstadosSolicitudR
 import com.enyoi.apimesaayuda.aplicacion.services.IEstadosSolicitudService;
 import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
+
+import com.enyoi.apimesaayuda.base.exceptions.NotActivate;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
+import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 @RequiredArgsConstructor
 public class EstadosSolicitudService implements IEstadosSolicitudService {
     private final ModelMapper modelMapper;
 
+    private static final String NOACTIVADO = "Error: Usuario no Activado.";
+
     private final EstadosSolicitudRepository estadosSolicitudRepository;
 
     private final LogsEstadosSolicitudRepository logsEstadosSolicitudRepository;
+
+    private final UsuariosRepository usuariosRepository;
+
     /*
      **@Auth: D David Galeano Puche
      */
@@ -45,9 +55,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
         return estadosSolicitudDTOList;
     }
 
-/*
-**@Auth: D David Galeano Puche
- */
+    /*
+     **@Auth: D David Galeano Puche
+     */
     @Override
     public EstadosSolicitudDTO findById(Long id) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
@@ -59,6 +69,7 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             throw new NotDataFound("estado no existe");
         }
     }
+
     /*
      **@Auth: D David Galeano Puche
      */
@@ -66,11 +77,10 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
     public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
         EstadosSolicitud estadosSolicitud;
-        if (estadosSolicitudOptional.isPresent()){
-            estadosSolicitud=estadosSolicitudOptional.get();
+        if (estadosSolicitudOptional.isPresent()) {
+            estadosSolicitud = estadosSolicitudOptional.get();
             return modelMapper.map(estadosSolicitud, EstadosSolicitudDTO.class);
-        }
-        else {
+        } else {
             throw new NotDataFound("Nombre estado no existe");
         }
 
@@ -97,11 +107,12 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             return modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
         }
     }
+
     /*
      **@Auth: D David Galeano Puche
      */
     @Override
-    public EstadosSolicitudDTO update (ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests){
+    public EstadosSolicitudDTO update(ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(actualizarEstadosSolicitudRequests.getEstadosSolicitudId());
         if (estadosSolicitudOptional.isPresent()) {
             EstadosSolicitud updateEstado = estadosSolicitudOptional.get();
@@ -120,26 +131,34 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             throw new NotDataFound("Solicitud no existe");
         }
     }
+
     /*
      **@Auth: D David Galeano Puche
      */
     @Override
-    public String delete (Long id, String usuarios){
-        Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
-                .orElseThrow(() -> new NotDataFound("No existe el estado: "+ id ) ));
-        if (estadosSolicitudOptional.isPresent()){
-            estadosSolicitudRepository.deleteById(id);
-            LogsEstadosSolicitud logsEstadosSolicitud =LogsEstadosSolicitud.builder()
-                    .usuario(usuarios)
-                    .acciones(Acciones.DELETE)
-                    .estadosSolicitud(estadosSolicitudOptional.get().getNombreEstado())
-                    .fechalog(new Date()).build();
-            logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
-            return modelMapper.map(estadosSolicitudOptional.get(), EstadosSolicitudDTO.class).getNombreEstado() + "Eliminado con Exito";
-        }else {
-            throw new NotDataFound("Estado no existe");
+    public String delete(Long id, String usuarios) {
+        Usuarios usuario = usuariosRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
+            Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
+                    .orElseThrow(() -> new NotDataFound("No existe el estado: " + id)));
+            if (estadosSolicitudOptional.isPresent()) {
+                estadosSolicitudRepository.deleteById(id);
+                LogsEstadosSolicitud logsEstadosSolicitud = LogsEstadosSolicitud.builder()
+                        .usuario(usuarios)
+                        .acciones(Acciones.DELETE)
+                        .estadosSolicitud(estadosSolicitudOptional.get().getNombreEstado())
+                        .fechalog(new Date()).build();
+                logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
+                return modelMapper.map(estadosSolicitudOptional.get(), EstadosSolicitudDTO.class).getNombreEstado() + "Eliminado con Exito";
+            } else {
+                throw new NotDataFound("Estado no existe");
+            }
+
+        } else {
+            throw new NotActivate(NOACTIVADO);
         }
-
-
     }
+
+
 }

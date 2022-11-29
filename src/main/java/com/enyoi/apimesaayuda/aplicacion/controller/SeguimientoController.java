@@ -130,8 +130,9 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-seguimiento")
-    public ResponseEntity<String> delete(@RequestParam("id") long id){
-        return (ResponseEntity<String>)responseDTOService.response(seguimientosService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id,
+                                         @RequestParam("usuario") String usuarios){
+        return (ResponseEntity<String>)responseDTOService.response(seguimientosService.delete(id,usuarios), HttpStatus.OK);
 
     }
 

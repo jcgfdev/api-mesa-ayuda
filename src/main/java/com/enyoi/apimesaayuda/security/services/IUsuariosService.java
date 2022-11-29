@@ -16,7 +16,7 @@ public interface IUsuariosService {
 
     String activarUsuarioId(Long userId);
 
-    UsuariosDTO cambiarClave(Long userId, String newClave, String ReNewClave);
+    UsuariosDTO cambiarClave(Long userId, String newClave, String reNewClave);
     String recuperarClaveEmail(String email, String url);
 
 

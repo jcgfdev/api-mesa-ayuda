@@ -7,11 +7,10 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
-@Getter
 @Setter
-public class TiposSolicitudRequest {
+@Getter
+public class CrearTiposSolicitudRequest {
     @NonNull
-    private Long tipoSolicitudId;
     @NotBlank
     private String tipoSolicitud;
     @NonNull

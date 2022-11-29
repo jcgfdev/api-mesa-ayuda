@@ -1,6 +1,7 @@
 package com.enyoi.apimesaayuda.aplicacion.controller;
 
 import com.enyoi.apimesaayuda.aplicacion.dtos.TiposSolicitudDTO;
+import com.enyoi.apimesaayuda.aplicacion.payloads.requests.CrearTiposSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.TiposSolicitudRequest;
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.utils.ResponseDTOService;
@@ -95,8 +96,12 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PostMapping("/saveTipoSolicitud")
-    public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam("tipoSolicitud") String tipoSolicitud) {
-        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.create(tipoSolicitud), HttpStatus.CREATED);
+    public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam CrearTiposSolicitudRequest crearTiposSolicitudRequest, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
+        } else {
+            return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.create(crearTiposSolicitudRequest), HttpStatus.CREATED);
+        }
     }
 
     @ApiResponses(value = {
@@ -133,7 +138,8 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/eliminar-uno")
-    public ResponseEntity<String> eliminarUno(@RequestParam("id") long id) {
-        return (ResponseEntity<String>) responseDTOService.response(tiposSolicitudService.delete(id), HttpStatus.OK);
+    public ResponseEntity<String> eliminarUno(@RequestParam("id") long id,
+                                              @RequestParam("usuario") String usuarios) {
+        return (ResponseEntity<String>) responseDTOService.response(tiposSolicitudService.delete(id, usuarios), HttpStatus.OK);
     }
 }

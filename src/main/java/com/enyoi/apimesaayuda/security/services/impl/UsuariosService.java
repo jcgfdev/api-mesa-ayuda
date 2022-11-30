@@ -167,7 +167,7 @@ public class UsuariosService implements IUsuariosService {
     public String activarUsuarioId(Long userId) {
         Usuarios usuarios = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException(USUARIONOEXISTE));
-        if (!usuarios.getActivado()) {
+        if (Boolean.FALSE.equals(usuarios.getActivado())) {
             String newToken = UUID.randomUUID().toString();
             ConfirmationToken confirmationToken = new ConfirmationToken();
             confirmationToken.setToken(newToken);

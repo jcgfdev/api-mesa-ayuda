@@ -137,8 +137,8 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      */
     @Override
     public String delete(Long id, String usuarios) {
-        Usuarios usuario = usuariosRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException(NOACTIVADO));
+        Usuarios usuario = usuariosRepository.findByEmail(usuarios)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
         if (Boolean.TRUE.equals(usuario.getActivado())) {
             Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
                     .orElseThrow(() -> new NotDataFound("No existe el estado: " + id)));

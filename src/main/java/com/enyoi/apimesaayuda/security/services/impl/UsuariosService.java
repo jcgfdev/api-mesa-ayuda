@@ -1,10 +1,7 @@
 package com.enyoi.apimesaayuda.security.services.impl;
 
 import com.enyoi.apimesaayuda.base.enums.Acciones;
-import com.enyoi.apimesaayuda.base.exceptions.EmailConfirmado;
-import com.enyoi.apimesaayuda.base.exceptions.EmailException;
-import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
-import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
+import com.enyoi.apimesaayuda.base.exceptions.*;
 import com.enyoi.apimesaayuda.security.configs.JwtUtils;
 import com.enyoi.apimesaayuda.security.dtos.UsuariosDTO;
 import com.enyoi.apimesaayuda.security.entities.ConfirmationToken;
@@ -52,6 +49,7 @@ public class UsuariosService implements IUsuariosService {
     private final PasswordEncoder encoder;
 
     private final JwtUtils jwtUtils;
+    private static final String CLAVESUPERADMI = "123456";
 
     private static final String ROLEEXCEPTION = "Error: Role is not found.";
     private static final String USUARIONOEXISTE= "El usuarion no exciste";
@@ -90,50 +88,54 @@ public class UsuariosService implements IUsuariosService {
         if (Boolean.TRUE.equals(userRepository.existsByEmail(usuariosRequest.getEmail()))) {
             throw new AlreadyExists("Error: usuario ya se encuentra registrado con dicho correo");
         } else {
-            Usuarios usuarios = new Usuarios();
-            usuarios.setNombres(usuariosRequest.getNombres());
-            usuarios.setApellidos(usuariosRequest.getApellidos());
-            usuarios.setEmail(usuariosRequest.getEmail());
-            usuarios.setClave(encoder.encode(usuariosRequest.getClave()));
-            Set<String> strRoles = usuariosRequest.getRoles();
-            Set<Roles> roles = new HashSet<>();
-            if (strRoles == null) {
-                Roles userRole = roleRepository.findByName(Role.ROLE_USUARIO)
-                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
-                roles.add(userRole);
-            } else {
-                strRoles.forEach(role -> {
-                    switch (role) {
-                        case "admin":
-                            Roles adminRol = roleRepository.findByName(Role.ROLE_ADMIN)
-                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
-                            roles.add(adminRol);
-                            break;
-                        case "tec":
-                            Roles tecnicoRol = roleRepository.findByName(Role.ROLE_TECNICO)
-                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
-                            roles.add(tecnicoRol);
-                            break;
-                        default:
-                            Roles usuarioRol = roleRepository.findByName(Role.ROLE_USUARIO)
-                                    .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
-                            roles.add(usuarioRol);
-                    }
-                });
+            if (usuariosRequest.getClaveSuperAdmi() != null && usuariosRequest.getClaveSuperAdmi().equals(CLAVESUPERADMI)) {
+                Usuarios usuarios = new Usuarios();
+                usuarios.setNombres(usuariosRequest.getNombres());
+                usuarios.setApellidos(usuariosRequest.getApellidos());
+                usuarios.setEmail(usuariosRequest.getEmail());
+                usuarios.setClave(encoder.encode(usuariosRequest.getClave()));
+                Set<String> strRoles = usuariosRequest.getRoles();
+                Set<Roles> roles = new HashSet<>();
+                if (strRoles == null) {
+                    Roles userRole = roleRepository.findByName(Role.ROLE_USUARIO)
+                            .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
+                    roles.add(userRole);
+                } else {
+                    strRoles.forEach(role -> {
+                        switch (role) {
+                            case "admin":
+                                Roles adminRol = roleRepository.findByName(Role.ROLE_ADMIN)
+                                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
+                                roles.add(adminRol);
+                                break;
+                            case "tec":
+                                Roles tecnicoRol = roleRepository.findByName(Role.ROLE_TECNICO)
+                                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
+                                roles.add(tecnicoRol);
+                                break;
+                            default:
+                                Roles usuarioRol = roleRepository.findByName(Role.ROLE_USUARIO)
+                                        .orElseThrow(() -> new RuntimeException(ROLEEXCEPTION));
+                                roles.add(usuarioRol);
+                        }
+                    });
+                }
+                usuarios.setRoles(roles);
+                UsuariosDTO usuariosDTO = modelMapper.map(userRepository.save(usuarios), UsuariosDTO.class);
+                String token = UUID.randomUUID().toString();
+                ConfirmationToken confirmationToken = new ConfirmationToken();
+                confirmationToken.setToken(token);
+                confirmationToken.setCreatedAt(LocalDateTime.now());
+                confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
+                confirmationToken.setUser(usuarios);
+                confirmationTokenService.saveConfirmationToken(confirmationToken);
+                String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken?token=" + token;
+                String nombre = usuariosDTO.getNombres() + " " + usuariosDTO.getApellidos();
+                emailService.enviar(usuariosDTO.getEmail(), buildEmailService.buildEmail(nombre, link));
+                return usuariosDTO;
+            }else {
+                throw new SinPermiso("Usuario sin permiso para crear");
             }
-            usuarios.setRoles(roles);
-            UsuariosDTO usuariosDTO = modelMapper.map(userRepository.save(usuarios), UsuariosDTO.class);
-            String token = UUID.randomUUID().toString();
-            ConfirmationToken confirmationToken = new ConfirmationToken();
-            confirmationToken.setToken(token);
-            confirmationToken.setCreatedAt(LocalDateTime.now());
-            confirmationToken.setExpiresAt(LocalDateTime.now().plusMinutes(15));
-            confirmationToken.setUser(usuarios);
-            confirmationTokenService.saveConfirmationToken(confirmationToken);
-            String link = "http://localhost:8080/api-mesa-ayuda/auth/confirmToken?token=" + token;
-            String nombre = usuariosDTO.getNombres() + " " + usuariosDTO.getApellidos();
-            emailService.enviar(usuariosDTO.getEmail(), buildEmailService.buildEmail(nombre, link));
-            return usuariosDTO;
         }
     }
 

@@ -30,5 +30,9 @@ public class UsuariosRequest {
     @Size(max = 120)
     @NonNull
     private String clave;
+    @NonNull
+    @NotBlank
+    @Size(max = 120)
+    private String claveSuperAdmi;
 
 }

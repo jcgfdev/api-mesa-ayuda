@@ -81,7 +81,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') ")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-por-nombre-estados")
     public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado) {
         return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
@@ -97,7 +97,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/crearEstado")
     public ResponseEntity<EstadosSolicitudDTO> create(@Valid @RequestBody CrearEstadosSolicitudRequest crearEstadosSolicitudRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -117,7 +117,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update-estado")
     public ResponseEntity<EstadosSolicitudDTO> update(@Valid @RequestBody ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -137,7 +137,7 @@ public class EstadosSolicitudController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-estado")
     public ResponseEntity<String> delete(@RequestParam("id") long id,
                                          @RequestParam("usuario") String usuarios){

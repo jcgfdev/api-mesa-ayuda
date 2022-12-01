@@ -219,7 +219,7 @@ public class SolicitudesController {
             @ApiResponse(responseCode = "500", description = "Error al crear Solicitud",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/saveSolicitud")
     public ResponseEntity<SolicitudesDTO> saveSolicitud(@Valid @RequestBody SolicitudesRequest solicitudesRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -241,7 +241,7 @@ public class SolicitudesController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PutMapping("/updateSolicitud")
     public ResponseEntity<SolicitudesDTO> updateSolicitudes(@Valid @RequestBody ActualizarSolicitudesRequest actualizarSolicitudesRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

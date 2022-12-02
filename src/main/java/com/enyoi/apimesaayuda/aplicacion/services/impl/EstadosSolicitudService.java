@@ -43,7 +43,10 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      **@Auth: D David Galeano Puche
      */
     @Override
-    public List<EstadosSolicitudDTO> findAll() {
+    public List<EstadosSolicitudDTO> findAll(String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         List<EstadosSolicitud> estadosSolicitudList = estadosSolicitudRepository.findAll();
         List<EstadosSolicitudDTO> estadosSolicitudDTOList = new ArrayList<>();
 
@@ -53,13 +56,18 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
         });
 
         return estadosSolicitudDTOList;
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
-
     /*
      **@Auth: D David Galeano Puche
      */
     @Override
-    public EstadosSolicitudDTO findById(Long id) {
+    public EstadosSolicitudDTO findById(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(id);
         EstadosSolicitud estadosSolicitud;
         if (estadosSolicitudOptional.isPresent()) {
@@ -68,13 +76,20 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
         } else {
             throw new NotDataFound("estado no existe");
         }
+
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     /*
      **@Auth: D David Galeano Puche
      */
     @Override
-    public EstadosSolicitudDTO findByNombreEstado(String nombreEstado) {
+    public EstadosSolicitudDTO findByNombreEstado(String nombreEstado, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(nombreEstado);
         EstadosSolicitud estadosSolicitud;
         if (estadosSolicitudOptional.isPresent()) {
@@ -84,6 +99,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             throw new NotDataFound("Nombre estado no existe");
         }
 
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
 
@@ -92,6 +110,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      */
     @Override
     public EstadosSolicitudDTO create(CrearEstadosSolicitudRequest crearEstadosSolicitudRequest) {
+        Usuarios usuario = usuariosRepository.findByEmail(crearEstadosSolicitudRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findByNombreEstado(crearEstadosSolicitudRequest.getNombreEstado());
         if (estadosSolicitudOptional.isPresent()) {
             throw new AlreadyExists("nombre estado solicitud ya existe. ");
@@ -106,6 +127,10 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
             return modelMapper.map(estadosSolicitudRepository.save(estadosSolicitud), EstadosSolicitudDTO.class);
         }
+
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     /*
@@ -113,6 +138,9 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
      */
     @Override
     public EstadosSolicitudDTO update(ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests) {
+        Usuarios usuario = usuariosRepository.findByEmail(actualizarEstadosSolicitudRequests.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<EstadosSolicitud> estadosSolicitudOptional = estadosSolicitudRepository.findById(actualizarEstadosSolicitudRequests.getEstadosSolicitudId());
         if (estadosSolicitudOptional.isPresent()) {
             EstadosSolicitud updateEstado = estadosSolicitudOptional.get();
@@ -130,14 +158,18 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
         } else {
             throw new NotDataFound("Solicitud no existe");
         }
+
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     /*
      **@Auth: D David Galeano Puche
      */
     @Override
-    public String delete(Long id, String usuarios) {
-        Usuarios usuario = usuariosRepository.findByEmail(usuarios)
+    public String delete(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
                 .orElseThrow(() -> new NotDataFound(NOACTIVADO));
         if (Boolean.TRUE.equals(usuario.getActivado())) {
             Optional<EstadosSolicitud> estadosSolicitudOptional = Optional.ofNullable(estadosSolicitudRepository.findById(id)
@@ -145,12 +177,12 @@ public class EstadosSolicitudService implements IEstadosSolicitudService {
             if (estadosSolicitudOptional.isPresent()) {
                 estadosSolicitudRepository.deleteById(id);
                 LogsEstadosSolicitud logsEstadosSolicitud = LogsEstadosSolicitud.builder()
-                        .usuario(usuarios)
+                        .usuario(user)
                         .acciones(Acciones.DELETE)
                         .estadosSolicitud(estadosSolicitudOptional.get().getNombreEstado())
                         .fechalog(new Date()).build();
                 logsEstadosSolicitudRepository.save(logsEstadosSolicitud);
-                return modelMapper.map(estadosSolicitudOptional.get(), EstadosSolicitudDTO.class).getNombreEstado() + "Eliminado con Exito";
+                return modelMapper.map(estadosSolicitudOptional.get(), EstadosSolicitudDTO.class).getNombreEstado() + " Eliminado con Exito ";
             } else {
                 throw new NotDataFound("Estado no existe");
             }

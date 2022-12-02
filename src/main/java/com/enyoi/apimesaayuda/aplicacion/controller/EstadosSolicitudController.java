@@ -49,8 +49,8 @@ public class EstadosSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-lista-estados")
-    public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos() {
-        return (ResponseEntity<List<EstadosSolicitudDTO>>) responseDTOService.response(estadosSolicitudService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<EstadosSolicitudDTO>> obtenerTodos(@RequestParam("user") String user) {
+        return (ResponseEntity<List<EstadosSolicitudDTO>>) responseDTOService.response(estadosSolicitudService.findAll(user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -66,8 +66,9 @@ public class EstadosSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @GetMapping("/obtener-por-id")
-    public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id) {
-        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id), HttpStatus.OK);
+    public ResponseEntity<EstadosSolicitudDTO> obtenerId(@RequestParam("id") long id,
+                                                         @RequestParam("user") String user) {
+        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findById(id, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -83,8 +84,9 @@ public class EstadosSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') ")
     @GetMapping("/obtener-por-nombre-estados")
-    public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado) {
-        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado), HttpStatus.OK);
+    public ResponseEntity<EstadosSolicitudDTO> obtenerNombreEstado(@RequestParam("nombreEstado") String nombreEstado,
+                                                                   @RequestParam("user") String user) {
+        return (ResponseEntity<EstadosSolicitudDTO>) responseDTOService.response(estadosSolicitudService.findByNombreEstado(nombreEstado, user), HttpStatus.OK);
     }
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
@@ -140,8 +142,8 @@ public class EstadosSolicitudController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @DeleteMapping("/delete-estado")
     public ResponseEntity<String> delete(@RequestParam("id") long id,
-                                         @RequestParam("usuario") String usuarios){
-        return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id, usuarios), HttpStatus.OK);
+                                         @RequestParam("user") String user){
+        return (ResponseEntity<String>)responseDTOService.response(estadosSolicitudService.delete(id, user), HttpStatus.OK);
 
     }
 

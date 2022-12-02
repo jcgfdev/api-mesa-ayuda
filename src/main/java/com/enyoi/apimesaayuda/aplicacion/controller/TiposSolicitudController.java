@@ -94,7 +94,7 @@ public class TiposSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al crear Tipo_solicitud",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveTipoSolicitud")
     public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam CrearTiposSolicitudRequest crearTiposSolicitudRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -115,7 +115,7 @@ public class TiposSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update-tipo-solicitud")
     public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody TiposSolicitudRequest tiposSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

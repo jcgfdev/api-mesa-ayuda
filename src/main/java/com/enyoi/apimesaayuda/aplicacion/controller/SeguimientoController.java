@@ -84,7 +84,7 @@ public class SeguimientoController {
             @ApiResponse(responseCode = "500", description = "Error al crear Seguimiento",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/saveSeguimiento")
     public ResponseEntity<SeguimientosDTO> saveSeguimiento(@Valid @RequestBody SeguimientosRequest seguimientosRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -104,7 +104,7 @@ public class SeguimientoController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PutMapping("/actualizar-seguimiento")
     public ResponseEntity<SeguimientosDTO> actualizarSeguimiento(
             @Valid @RequestBody ActualizarSeguimientosRequest actualizarSeguimientosRequest,

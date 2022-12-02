@@ -10,6 +10,7 @@ import com.enyoi.apimesaayuda.aplicacion.repositories.*;
 import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogSeguimientosRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ISeguimientosService;
 import com.enyoi.apimesaayuda.base.enums.Acciones;
+import com.enyoi.apimesaayuda.base.exceptions.NotActivate;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
@@ -38,9 +39,13 @@ public class SeguimientoService implements ISeguimientosService {
     private final SolicitudesRepository solicitudesRepository;
     private final UsuariosRepository usuariosRepository;
     private final LogSeguimientosRepository logsSeguimientosRository;
+    private static final String NOACTIVADO ="usuario no acticado";
 
     @Override
-    public List<SeguimientosDTO> findAll() {
+    public List<SeguimientosDTO> findAll(String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         List<Seguimientos> seguimientosList = seguimientosRepository.findAll();
         List<SeguimientosDTO> seguimientosDTOList = new ArrayList<>();
 
@@ -50,6 +55,9 @@ public class SeguimientoService implements ISeguimientosService {
         });
 
         return seguimientosDTOList;
+        }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     /*
@@ -57,7 +65,10 @@ public class SeguimientoService implements ISeguimientosService {
     solicitudes = sEGUIMIENTO
      */
     @Override
-    public Page<SeguimientosDTO> findBySolicitudesId(Long solicitudesId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SeguimientosDTO> findBySolicitudesId(Long solicitudesId, int page, int size, String columnFilter, Sort.Direction direction,String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         Solicitudes solicitudes = solicitudesRepository.findById(solicitudesId)
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -68,11 +79,16 @@ public class SeguimientoService implements ISeguimientosService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+        }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
     public SeguimientosDTO crear(SeguimientosRequest seguimientosRequest) {
-
+        Usuarios usuario = usuariosRepository.findByEmail(seguimientosRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Seguimientos seguimientos = new Seguimientos();
         Solicitudes solicitudes = solicitudesRepository.findById(seguimientosRequest.getSolicitudesId())
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -90,46 +106,56 @@ public class SeguimientoService implements ISeguimientosService {
                 .fechalog(new Date()).build();
         logsSeguimientosRository.save(logsSeguimientos);
         return modelMapper.map(seguimientosRepository.save(seguimientos), SeguimientosDTO.class);
-
+        }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
     public SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest) {
-        Optional<Seguimientos> seguimientosOptional = seguimientosRepository
-                .findById(actualizarSeguimientosRequest.getSeguimientoId());
-        if (seguimientosOptional.isPresent()) {
-            Seguimientos seguimientosGuardar = seguimientosOptional.get();
-            Solicitudes solicitudes = solicitudesRepository.findById(actualizarSeguimientosRequest.getSolicitudesId())
-                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
-            seguimientosGuardar.setSolicitudesId(solicitudes);
-            seguimientosGuardar.setTitulo(actualizarSeguimientosRequest.getTitulo());
-            seguimientosGuardar.setFechaRealizado(actualizarSeguimientosRequest.getFechaRealizado());
-            seguimientosGuardar.setDescripcion(actualizarSeguimientosRequest.getDescripcion());
-            Usuarios usuarios = usuariosRepository.findById(actualizarSeguimientosRequest.getResponsableId())
-                    .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
-            seguimientosGuardar.setResponsableId(usuarios);
-            seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
-            LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
-                    .usuario(actualizarSeguimientosRequest.getUsuario())
-                    .acciones(Acciones.CREATED)
-                    .seguimientos(actualizarSeguimientosRequest.getDescripcion())
-                    .fechalog(new Date()).build();
-            logsSeguimientosRository.save(logsSeguimientos);
-            return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
-        } else {
-            throw new NotDataFound("Id de seguimiento no existe");
+        Usuarios usuario = usuariosRepository.findByEmail(actualizarSeguimientosRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
+            Optional<Seguimientos> seguimientosOptional = seguimientosRepository
+                    .findById(actualizarSeguimientosRequest.getSeguimientoId());
+            if (seguimientosOptional.isPresent()) {
+                Seguimientos seguimientosGuardar = seguimientosOptional.get();
+                Solicitudes solicitudes = solicitudesRepository.findById(actualizarSeguimientosRequest.getSolicitudesId())
+                        .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+                seguimientosGuardar.setSolicitudesId(solicitudes);
+                seguimientosGuardar.setTitulo(actualizarSeguimientosRequest.getTitulo());
+                seguimientosGuardar.setFechaRealizado(actualizarSeguimientosRequest.getFechaRealizado());
+                seguimientosGuardar.setDescripcion(actualizarSeguimientosRequest.getDescripcion());
+                Usuarios usuarios = usuariosRepository.findById(actualizarSeguimientosRequest.getResponsableId())
+                        .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
+                seguimientosGuardar.setResponsableId(usuarios);
+                seguimientosGuardar = seguimientosRepository.save(seguimientosGuardar);
+                LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
+                        .usuario(actualizarSeguimientosRequest.getUsuario())
+                        .acciones(Acciones.CREATED)
+                        .seguimientos(actualizarSeguimientosRequest.getDescripcion())
+                        .fechalog(new Date()).build();
+                logsSeguimientosRository.save(logsSeguimientos);
+                return modelMapper.map(seguimientosGuardar, SeguimientosDTO.class);
+            } else {
+                throw new NotDataFound("Id de seguimiento no existe");
+            }
+        }else{
+            throw new NotActivate(NOACTIVADO);
         }
-
     }
 
     @Override
-    public java.lang.String delete(Long id, String usuarios) {
+    public java.lang.String delete(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<Seguimientos> seguimientosOptional = Optional.ofNullable(seguimientosRepository.findById(id))
                 .orElseThrow(() -> new NotDataFound("No existe el estado: " + id));
         if (seguimientosOptional.isPresent()) {
             seguimientosRepository.deleteById(id);
             LogsSeguimientos logsSeguimientos = LogsSeguimientos.builder()
-                    .usuario(usuarios)
+                    .usuario(user)
                     .acciones(Acciones.CREATED)
                     .seguimientos(seguimientosOptional.get().getDescripcion())
                     .fechalog(new Date()).build();
@@ -138,7 +164,9 @@ public class SeguimientoService implements ISeguimientosService {
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
-
+        } else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 }
 

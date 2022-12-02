@@ -7,11 +7,11 @@ import com.enyoi.apimesaayuda.aplicacion.payloads.requests.DependenciasRequests;
 import java.util.List;
 
 public interface IDependenciasService {
-    List<DependenciasDTO> findAll();
+    List<DependenciasDTO> findAll(String user);
 
-    DependenciasDTO findById(Long id);
+    DependenciasDTO findById(Long id, String user);
 
-    DependenciasDTO findByNombreDependencia(String nombreDependencia);
+    DependenciasDTO findByNombreDependencia(String nombreDependencia, String user);
 
     DependenciasDTO create(CrearDependenciasRequest crearDependenciasRequest);
 

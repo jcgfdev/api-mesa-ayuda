@@ -8,16 +8,16 @@ import java.util.List;
 
 public interface ITiposSolicitudService {
 
-    List<TiposSolicitudDTO> findAll();
+    List<TiposSolicitudDTO> findAll(String user);
 
-    TiposSolicitudDTO findById(Long id);
+    TiposSolicitudDTO findById(Long id, String user);
 
-    TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud);
+    TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud, String user);
 
     TiposSolicitudDTO create(CrearTiposSolicitudRequest crearTiposSolicitudRequest);
 
     TiposSolicitudDTO update(TiposSolicitudRequest tiposSolicitudRequests);
 
-    String delete(Long id, String usuarios);
+    String delete(Long id, String user);
 
 }

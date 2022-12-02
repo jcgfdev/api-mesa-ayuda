@@ -44,8 +44,8 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtenerTodos")
-    public ResponseEntity<List<DependenciasDTO>> obtenerTodos() {
-        return (ResponseEntity<List<DependenciasDTO>>) responseDTOService.response(dependenciasService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<DependenciasDTO>> obtenerTodos(@RequestParam("usuary") String user) {
+        return (ResponseEntity<List<DependenciasDTO>>) responseDTOService.response(dependenciasService.findAll(user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -59,10 +59,11 @@ public class DependenciasController {
             @ApiResponse(responseCode = "500", description = "error al solicitar informacion",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @GetMapping("/obtenerUno")
-    public ResponseEntity<DependenciasDTO> obtenerUnoId(@RequestParam("id") long id) {
-        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findById(id), HttpStatus.OK);
+    public ResponseEntity<DependenciasDTO> obtenerUnoId(@RequestParam("id") long id,
+                                                        @RequestParam("usuary") String user) {
+        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findById(id, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -78,8 +79,9 @@ public class DependenciasController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtenerUnoporNombre")
-    public ResponseEntity<DependenciasDTO> obtenerporNombre(@RequestParam("nombre") String nombre) {
-        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findByNombreDependencia(nombre), HttpStatus.OK);
+    public ResponseEntity<DependenciasDTO> obtenerporNombre(@RequestParam("nombre") String nombre,
+                                                            @RequestParam("user") String user) {
+        return (ResponseEntity<DependenciasDTO>) responseDTOService.response(dependenciasService.findByNombreDependencia(nombre, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -93,7 +95,7 @@ public class DependenciasController {
             @ApiResponse(responseCode = "500", description = "Error al crear Dependencia",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveDependencia")
     public ResponseEntity<DependenciasDTO> create(@Valid @RequestBody CrearDependenciasRequest crearDependenciasRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -114,7 +116,7 @@ public class DependenciasController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/updateDependencia")
     public ResponseEntity<DependenciasDTO> updateDependencia(@Valid @RequestBody DependenciasRequests dependenciasRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {

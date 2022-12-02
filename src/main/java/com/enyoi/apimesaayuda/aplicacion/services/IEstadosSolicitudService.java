@@ -10,19 +10,19 @@ import java.util.List;
  */
 public interface IEstadosSolicitudService {
 
-    List<EstadosSolicitudDTO> findAll();
+    List<EstadosSolicitudDTO> findAll(String user);
 
-    EstadosSolicitudDTO findById(Long id);
+    EstadosSolicitudDTO findById(Long id, String user);
 
 
-    EstadosSolicitudDTO findByNombreEstado(String nombreEstado);
+    EstadosSolicitudDTO findByNombreEstado(String nombreEstado, String user);
 
 
     EstadosSolicitudDTO create(CrearEstadosSolicitudRequest crearEstadosSolicitudRequest);
 
     EstadosSolicitudDTO update(ActualizarEstadosSolicitudRequests actualizarEstadosSolicitudRequests);
 
-    String delete(Long id, String usuarios);
+    String delete(Long id, String user);
 
 
 

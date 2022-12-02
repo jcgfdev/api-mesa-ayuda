@@ -49,8 +49,9 @@ public class SolicitudesController {
     public ResponseEntity<Page<SolicitudesDTO>> findAll(@RequestParam(name = "page", defaultValue = "0") int page,
                                                         @RequestParam(name = "size", defaultValue = "10") int size,
                                                         @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                        @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
-        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findAll(page, size, columnFilter, direction), HttpStatus.OK);
+                                                        @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+                                                        @RequestParam("user")String user) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findAll(page, size, columnFilter, direction, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -66,8 +67,9 @@ public class SolicitudesController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/findByCodigo")
-    public ResponseEntity<SolicitudesDTO> findByCodigo(@RequestParam("codigo") String codigo) {
-        return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.findByCodigo(codigo),
+    public ResponseEntity<SolicitudesDTO> findByCodigo(@RequestParam("codigo") String codigo,
+                                                       @RequestParam("user")String user) {
+        return (ResponseEntity<SolicitudesDTO>) responseDTOService.response(solicitudesService.findByCodigo(codigo, user),
                 HttpStatus.OK);
     }
 
@@ -89,9 +91,10 @@ public class SolicitudesController {
              @RequestParam(name = "page", defaultValue = "0") int page,
              @RequestParam(name = "size", defaultValue = "10") int size,
              @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
-             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+             @RequestParam("user")String user) {
         return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
-                .findByTipoSolicitudId(tipoSolicitudId, page, size, columFilter, direction), HttpStatus.OK);
+                .findByTipoSolicitudId(tipoSolicitudId, page, size, columFilter, direction, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -112,9 +115,10 @@ public class SolicitudesController {
              @RequestParam(name = "page", defaultValue = "0") int page,
              @RequestParam(name = "size", defaultValue = "10") int size,
              @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
-             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+             @RequestParam("user")String user) {
         return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
-                .findByDependenciasId(dependenciasId, page, size, columFilter, direction), HttpStatus.OK);
+                .findByDependenciasId(dependenciasId, page, size, columFilter, direction, user), HttpStatus.OK);
 
     }
 
@@ -136,9 +140,10 @@ public class SolicitudesController {
              @RequestParam(name = "page", defaultValue = "0") int page,
              @RequestParam(name = "size", defaultValue = "10") int size,
              @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
-             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+             @RequestParam("user")String user) {
         return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
-                .findBySolicitanteId(solicitanteId, page, size, columFilter, direction), HttpStatus.OK);
+                .findBySolicitanteId(solicitanteId, page, size, columFilter, direction, user), HttpStatus.OK);
 
     }
 
@@ -160,8 +165,9 @@ public class SolicitudesController {
                                                                             @RequestParam(name = "page", defaultValue = "0") int page,
                                                                             @RequestParam(name = "size", defaultValue = "10") int size,
                                                                             @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
-        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction), HttpStatus.OK);
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+                                                                            @RequestParam("user")String user) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction, user), HttpStatus.OK);
     }
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "data found",
@@ -181,8 +187,9 @@ public class SolicitudesController {
                                                                             @RequestParam(name = "page", defaultValue = "0") int page,
                                                                             @RequestParam(name = "size", defaultValue = "10") int size,
                                                                             @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
-        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction), HttpStatus.OK);
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+                                                                             @RequestParam("user")String user) {
+        return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService.findByFechaSolicitudBetween(fechaInicio, fechaFin, page, size, columnFilter, direction, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -203,9 +210,10 @@ public class SolicitudesController {
              @RequestParam(name = "page", defaultValue = "0") int page,
              @RequestParam(name = "size", defaultValue = "10") int size,
              @RequestParam(name = "columFilter", defaultValue = "id") String columFilter,
-             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction) {
+             @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+             @RequestParam("user")String user) {
         return (ResponseEntity<Page<SolicitudesDTO>>) responseDTOService.response(solicitudesService
-                .findByEstadoId(estadoId, page, size, columFilter, direction), HttpStatus.OK);
+                .findByEstadoId(estadoId, page, size, columFilter, direction, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -219,7 +227,7 @@ public class SolicitudesController {
             @ApiResponse(responseCode = "500", description = "Error al crear Solicitud",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/saveSolicitud")
     public ResponseEntity<SolicitudesDTO> saveSolicitud(@Valid @RequestBody SolicitudesRequest solicitudesRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -241,7 +249,7 @@ public class SolicitudesController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PutMapping("/updateSolicitud")
     public ResponseEntity<SolicitudesDTO> updateSolicitudes(@Valid @RequestBody ActualizarSolicitudesRequest actualizarSolicitudesRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -265,8 +273,9 @@ public class SolicitudesController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/delete-Solicitudes")
-    public ResponseEntity<String> delete(@RequestParam("id") long id) {
-        return (ResponseEntity<String>) responseDTOService.response(solicitudesService.eliminar(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@RequestParam("id") long id,
+                                         @RequestParam("user")String user) {
+        return (ResponseEntity<String>) responseDTOService.response(solicitudesService.eliminar(id, user), HttpStatus.OK);
 
     }
 

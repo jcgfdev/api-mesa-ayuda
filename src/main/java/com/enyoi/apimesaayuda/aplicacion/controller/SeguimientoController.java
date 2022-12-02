@@ -48,8 +48,8 @@ public class SeguimientoController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos-seguimientos")
-    public ResponseEntity<List<SeguimientosDTO>> obtenerTodos() {
-        return (ResponseEntity<List<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<SeguimientosDTO>> obtenerTodos(@RequestParam(name = "user")String user) {
+        return (ResponseEntity<List<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findAll(user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -69,8 +69,9 @@ public class SeguimientoController {
                                                                             @RequestParam(name = "page", defaultValue = "0") int page,
                                                                             @RequestParam(name = "size", defaultValue = "10") int size,
                                                                             @RequestParam(name = "columnFilter", defaultValue = "id") String columnFilter,
-                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction){
-        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId,page,size,columnFilter,direction),HttpStatus.OK );
+                                                                            @RequestParam(name = "direction", defaultValue = "ASC") Sort.Direction direction,
+                                                                            @RequestParam(name = "user")String user){
+        return (ResponseEntity<Page<SeguimientosDTO>>) responseDTOService.response(seguimientosService.findBySolicitudesId(solicitudesId,page,size,columnFilter,direction,user),HttpStatus.OK );
     }
 
     @ApiResponses(value = {
@@ -84,7 +85,7 @@ public class SeguimientoController {
             @ApiResponse(responseCode = "500", description = "Error al crear Seguimiento",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @PostMapping("/saveSeguimiento")
     public ResponseEntity<SeguimientosDTO> saveSeguimiento(@Valid @RequestBody SeguimientosRequest seguimientosRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -104,7 +105,7 @@ public class SeguimientoController {
             @ApiResponse(responseCode = "500", description = "error al solicitar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
     @PutMapping("/actualizar-seguimiento")
     public ResponseEntity<SeguimientosDTO> actualizarSeguimiento(
             @Valid @RequestBody ActualizarSeguimientosRequest actualizarSeguimientosRequest,

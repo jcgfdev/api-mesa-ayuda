@@ -5,13 +5,17 @@ import com.enyoi.apimesaayuda.aplicacion.entities.Dependencias;
 import com.enyoi.apimesaayuda.aplicacion.entities.EstadosSolicitud;
 import com.enyoi.apimesaayuda.aplicacion.entities.Solicitudes;
 import com.enyoi.apimesaayuda.aplicacion.entities.TiposSolicitud;
+import com.enyoi.apimesaayuda.aplicacion.entities.logs.LogsSolicitudes;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.ActualizarSolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.payloads.requests.SolicitudesRequest;
 import com.enyoi.apimesaayuda.aplicacion.repositories.DependenciasRepository;
 import com.enyoi.apimesaayuda.aplicacion.repositories.EstadosSolicitudRepository;
 import com.enyoi.apimesaayuda.aplicacion.repositories.SolicitudesRepository;
 import com.enyoi.apimesaayuda.aplicacion.repositories.TiposSolicitudRepository;
+import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogsSolicitudesRepository;
 import com.enyoi.apimesaayuda.aplicacion.services.ISolicitudesService;
+import com.enyoi.apimesaayuda.base.enums.Acciones;
+import com.enyoi.apimesaayuda.base.exceptions.NotActivate;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
 import com.enyoi.apimesaayuda.security.entities.Usuarios;
 import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
@@ -33,6 +37,7 @@ public class SolicitudesService implements ISolicitudesService {
     private final ModelMapper modelMapper;
     private final DateUtil dateUtil;
     private static final String NOEXISTENDATOS = "datos no existen";
+    private static final String NOACTIVADO = "Error: Usuario no Activado.";
 
     //Repositorios
     private final SolicitudesRepository solicitudesRepository;
@@ -40,9 +45,13 @@ public class SolicitudesService implements ISolicitudesService {
     private final DependenciasRepository dependenciasRepository;
     private final UsuariosRepository usuariosRepository;
     private final EstadosSolicitudRepository estadosSolicitudRepository;
+    private final LogsSolicitudesRepository logsSolicitudesRepository;
 
     @Override
-    public Page<SolicitudesDTO> findAll(int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findAll(int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         List<SolicitudesDTO> list = solicitudesRepository.findAll(pageable)
                 .stream()
@@ -51,10 +60,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public SolicitudesDTO findByCodigo(String codigo) {
+    public SolicitudesDTO findByCodigo(String codigo, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(codigo);
         Solicitudes solicitudes;
         if (solicitudesOptional.isPresent()) {
@@ -64,10 +79,16 @@ public class SolicitudesService implements ISolicitudesService {
             throw new NotDataFound(NOEXISTENDATOS);
         }
 
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         TiposSolicitud tiposSolicitud = tiposSolicitudRepository.findById(tiposSolicitudId)
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -78,10 +99,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         Dependencias dependencias = dependenciasRepository.findById(dependenciasId)
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -92,10 +119,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         Usuarios usuarios = usuariosRepository.findById(solicitanteId)
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -106,10 +139,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         List<SolicitudesDTO> list = solicitudesRepository.findByFechaSolicitudBetween(fechaInicio, fechaFin, pageable)
                 .stream()
@@ -118,10 +157,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         List<SolicitudesDTO> list = solicitudesRepository.findByFechaFinalizadoBetween(fechaInicio, fechaFin, pageable)
                 .stream()
@@ -130,10 +175,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction) {
+    public Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, columnFilter));
         EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(estadoId)
                 .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
@@ -144,10 +195,16 @@ public class SolicitudesService implements ISolicitudesService {
         final int start = (int) pageable.getOffset();
         final int end = Math.min((start + pageable.getPageSize()), list.size());
         return new PageImpl<>(list.subList(start, end), pageable, list.size());
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
     public SolicitudesDTO crear(SolicitudesRequest solicitudesRequest) {
+        Usuarios usuario = usuariosRepository.findByEmail(solicitudesRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(solicitudesRequest.getCodigo());
         if (solicitudesOptional.isPresent()) {
             throw new NotDataFound("codigo de solicitud ya ha sido asignado");
@@ -171,12 +228,24 @@ public class SolicitudesService implements ISolicitudesService {
             EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(solicitudesRequest.getEstadoId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudes.setEstadoId(estadosSolicitud);
+            LogsSolicitudes logsSolicitudes = LogsSolicitudes.builder()
+                    .usuario(solicitudesRequest.getUsuario())
+                    .acciones(Acciones.CREATED)
+                    .solicitudes(solicitudesRequest.getDescripcion())
+                    .fechalog(new Date()).build();
+            logsSolicitudesRepository.save(logsSolicitudes);
             return modelMapper.map(solicitudesRepository.save(solicitudes), SolicitudesDTO.class);
+        }
+    }else {
+            throw new NotActivate(NOACTIVADO);
         }
     }
 
     @Override
     public SolicitudesDTO actualizar(ActualizarSolicitudesRequest actualizarSolicitudesRequest) {
+        Usuarios usuario = usuariosRepository.findByEmail(actualizarSolicitudesRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByCodigo(actualizarSolicitudesRequest.getCodigo());
         if (solicitudesOptional.isPresent()) {
             Solicitudes solicitudesGuardar = solicitudesOptional.get();
@@ -198,23 +267,46 @@ public class SolicitudesService implements ISolicitudesService {
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudesGuardar.setTipoSolicitudId(tiposSolicitud);
             solicitudesGuardar = solicitudesRepository.save(solicitudesGuardar);
+            LogsSolicitudes logsSolicitudes = LogsSolicitudes.builder()
+                    .usuario(actualizarSolicitudesRequest.getUsuario())
+                    .acciones(Acciones.UPDATE)
+                    .solicitudes(actualizarSolicitudesRequest.getDescripcion())
+                    .fechalog(new Date()).build();
+            logsSolicitudesRepository.save(logsSolicitudes);
             return modelMapper.map(solicitudesGuardar, SolicitudesDTO.class);
         } else {
             throw new NotDataFound("codigo de solicitud no existe");
         }
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public String eliminar(Long id) {
+    public String eliminar(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<Solicitudes> solicitudesOptional = Optional.ofNullable(solicitudesRepository.findById(id)
                 .orElseThrow(() -> new NotDataFound(" Solicitud No existe: " + id)));
         if (solicitudesOptional.isPresent()) {
             solicitudesRepository.deleteById(id);
+            LogsSolicitudes logsSolicitudes = LogsSolicitudes.builder()
+                    .usuario(user)
+                    .acciones(Acciones.DELETE)
+                    .solicitudes(solicitudesOptional.get().getDescripcion())
+                    .fechalog(new Date()).build();
+            logsSolicitudesRepository.save(logsSolicitudes);
 
             return modelMapper.map(solicitudesOptional.get(), SolicitudesDTO.class).getId() + "Eliminado con Exito";
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
+
+
 
 }

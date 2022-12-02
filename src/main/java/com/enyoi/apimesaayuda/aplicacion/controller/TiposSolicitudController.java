@@ -45,8 +45,8 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-todos")
-    public ResponseEntity<List<TiposSolicitudDTO>> obtenerTodos() {
-        return (ResponseEntity<List<TiposSolicitudDTO>>) responseDTOService.response(tiposSolicitudService.findAll(), HttpStatus.OK);
+    public ResponseEntity<List<TiposSolicitudDTO>> obtenerTodos(@RequestParam("user") String user) {
+        return (ResponseEntity<List<TiposSolicitudDTO>>) responseDTOService.response(tiposSolicitudService.findAll(user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -62,8 +62,9 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-uno")
-    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("id") Long id) {
-        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findById(id), HttpStatus.OK);
+    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("id") Long id,
+                                                        @RequestParam("user") String user) {
+        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findById(id, user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -79,8 +80,9 @@ public class TiposSolicitudController {
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO') or hasRole('ROLE_USUARIO')")
     @GetMapping("/obtener-uno-por-tipo")
-    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("tipo") String tipo) {
-        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findByTipoSolicitud(tipo), HttpStatus.OK);
+    public ResponseEntity<TiposSolicitudDTO> obtenerUno(@RequestParam("tipo") String tipo,
+                                                        @RequestParam("user") String user) {
+        return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(tiposSolicitudService.findByTipoSolicitud(tipo,user), HttpStatus.OK);
     }
 
     @ApiResponses(value = {
@@ -94,9 +96,9 @@ public class TiposSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al crear Tipo_solicitud",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping("/saveTipoSolicitud")
-    public ResponseEntity<TiposSolicitudDTO> saveUser(@RequestParam CrearTiposSolicitudRequest crearTiposSolicitudRequest, BindingResult bindingResult) {
+    public ResponseEntity<TiposSolicitudDTO> saveUser(@Valid @RequestBody CrearTiposSolicitudRequest crearTiposSolicitudRequest, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return (ResponseEntity<TiposSolicitudDTO>) responseDTOService.response(HttpStatus.BAD_REQUEST);
         } else {
@@ -115,7 +117,7 @@ public class TiposSolicitudController {
             @ApiResponse(responseCode = "500", description = "Error al actualizar",
                     content = @Content)})
     @Operation(security = {@SecurityRequirement(name = "bearer-key")})
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TECNICO')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/update-tipo-solicitud")
     public ResponseEntity<TiposSolicitudDTO> updateTipoSolicitud(@Valid @RequestBody TiposSolicitudRequest tiposSolicitudRequests, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
@@ -139,7 +141,7 @@ public class TiposSolicitudController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/eliminar-uno")
     public ResponseEntity<String> eliminarUno(@RequestParam("id") long id,
-                                              @RequestParam("usuario") String usuarios) {
-        return (ResponseEntity<String>) responseDTOService.response(tiposSolicitudService.delete(id, usuarios), HttpStatus.OK);
+                                              @RequestParam("user") String user) {
+        return (ResponseEntity<String>) responseDTOService.response(tiposSolicitudService.delete(id, user), HttpStatus.OK);
     }
 }

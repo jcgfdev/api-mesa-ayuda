@@ -10,15 +10,15 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 public interface ISeguimientosService {
-    List<SeguimientosDTO> findAll();
+    List<SeguimientosDTO> findAll(String user);
 
-    Page<SeguimientosDTO> findBySolicitudesId(Long solicitudesId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SeguimientosDTO> findBySolicitudesId(Long solicitudesId, int page, int size, String columnFilter, Sort.Direction direction,String user);
 
     SeguimientosDTO crear(SeguimientosRequest seguimientosRequest);
 
     SeguimientosDTO actualizar(ActualizarSeguimientosRequest actualizarSeguimientosRequest);
 
-    String delete(Long id, String usuarios);
+    String delete(Long id, String user);
 
 
 }

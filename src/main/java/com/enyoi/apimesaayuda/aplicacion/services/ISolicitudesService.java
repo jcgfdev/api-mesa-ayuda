@@ -9,25 +9,25 @@ import org.springframework.data.domain.Sort;
 import java.util.Date;
 
 public interface ISolicitudesService {
-    Page<SolicitudesDTO> findAll(int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findAll(int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    SolicitudesDTO findByCodigo(String codigo);
+    SolicitudesDTO findByCodigo(String codigo, String user);
 
-    Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByTipoSolicitudId(Long tiposSolicitudId, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByDependenciasId(Long dependenciasId, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findBySolicitanteId(Long solicitanteId, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByFechaFinalizadoBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
-    Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction);
+    Page<SolicitudesDTO> findByEstadoId(Long estadoId, int page, int size, String columnFilter, Sort.Direction direction, String user);
 
     SolicitudesDTO crear(SolicitudesRequest solicitudesRequest);
 
     SolicitudesDTO actualizar(ActualizarSolicitudesRequest actualizarSolicitudesRequest);
 
-    String eliminar(Long id);
+    String eliminar(Long id, String user);
 }

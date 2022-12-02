@@ -10,7 +10,10 @@ import com.enyoi.apimesaayuda.aplicacion.repositories.logs.LogsTiposSolicitudRep
 import com.enyoi.apimesaayuda.aplicacion.services.ITiposSolicitudService;
 import com.enyoi.apimesaayuda.base.enums.Acciones;
 import com.enyoi.apimesaayuda.base.exceptions.AlreadyExists;
+import com.enyoi.apimesaayuda.base.exceptions.NotActivate;
 import com.enyoi.apimesaayuda.base.exceptions.NotDataFound;
+import com.enyoi.apimesaayuda.security.entities.Usuarios;
+import com.enyoi.apimesaayuda.security.repositories.UsuariosRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -27,23 +30,35 @@ public class TiposSolicitudService implements ITiposSolicitudService {
     private final ModelMapper modelMapper;
     private final LogsTiposSolicitudRepository logsTiposSolicitudRepository;
     private static final String NOEXISTENDATOS = "No esxisten datos";
+    private static final String NOACTIVADO = "Error: Usuario no Activado.";
     private final TiposSolicitudRepository tiposSolicitudRepository;
+    private final UsuariosRepository usuariosRepository;
 
 
     @Override
-    public List<TiposSolicitudDTO> findAll() {
-        List<TiposSolicitud> tiposSolicitudList = tiposSolicitudRepository.findAll();
-        List<TiposSolicitudDTO> tiposSolicitudDTOList = new ArrayList<>();
-        tiposSolicitudList.forEach(tiposSolicitud -> {
-            TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
-            tiposSolicitudDTOList.add(tiposSolicitudDTO);
-        });
+    public List<TiposSolicitudDTO> findAll(String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotActivate(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
+            List<TiposSolicitud> tiposSolicitudList = tiposSolicitudRepository.findAll();
+            List<TiposSolicitudDTO> tiposSolicitudDTOList = new ArrayList<>();
+            tiposSolicitudList.forEach(tiposSolicitud -> {
+                TiposSolicitudDTO tiposSolicitudDTO = modelMapper.map(tiposSolicitud, TiposSolicitudDTO.class);
+                tiposSolicitudDTOList.add(tiposSolicitudDTO);
+            });
 
-        return tiposSolicitudDTOList;
+            return tiposSolicitudDTOList;
+        } else {
+            throw new NotActivate(NOACTIVADO);
+        }
+
     }
 
     @Override
-    public TiposSolicitudDTO findById(Long id) {
+    public TiposSolicitudDTO findById(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository.findById(id);
         TiposSolicitud tiposSolicitud;
         if (tiposSolicitudOptional.isPresent()) {
@@ -53,10 +68,16 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             throw new NotDataFound(NOEXISTENDATOS);
         }
 
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
-    public TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud) {
+    public TiposSolicitudDTO findByTipoSolicitud(String tipoSolicitud, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository.findByTipoSolicitud(tipoSolicitud);
         TiposSolicitud tiposSolicitud;
         if (tiposSolicitudOptional.isPresent()) {
@@ -65,11 +86,17 @@ public class TiposSolicitudService implements ITiposSolicitudService {
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
+
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public TiposSolicitudDTO create(CrearTiposSolicitudRequest crearTiposSolicitudRequest) {
+        Usuarios usuario = usuariosRepository.findByEmail(crearTiposSolicitudRequest.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository
                 .findByTipoSolicitud(crearTiposSolicitudRequest.getTipoSolicitud());
         if (tiposSolicitudOptional.isPresent()) {
@@ -86,10 +113,16 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             return modelMapper.map(tiposSolicitudRepository.save(tiposSolicitud), TiposSolicitudDTO.class);
         }
 
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
     @Override
     public TiposSolicitudDTO update(TiposSolicitudRequest tiposSolicitudRequests) {
+        Usuarios usuario = usuariosRepository.findByEmail(tiposSolicitudRequests.getUsuario())
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<TiposSolicitud> tiposSolicitudOptional = tiposSolicitudRepository.findById(tiposSolicitudRequests.getTipoSolicitudId());
         if (tiposSolicitudOptional.isPresent()) {
             TiposSolicitud tipoSolicitudGuardar = tiposSolicitudOptional.get();
@@ -106,17 +139,23 @@ public class TiposSolicitudService implements ITiposSolicitudService {
         } else {
             throw new NotDataFound(NOEXISTENDATOS);
         }
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
 
 
     @Override
-    public String delete(Long id, String usuarios) {
+    public String delete(Long id, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
         Optional<TiposSolicitud> tiposSolicitudOptional = Optional.ofNullable(tiposSolicitudRepository.findById(id)
                 .orElseThrow(() -> new NotDataFound("No existe el Tipo solicitud: " + id)));
         if (tiposSolicitudOptional.isPresent()) {
             tiposSolicitudRepository.deleteById(id);
             LogsTiposSolicitud logsTiposSolicitud = LogsTiposSolicitud.builder()
-                    .usuario(usuarios)
+                    .usuario(user)
                     .acciones(Acciones.DELETE)
                     .tiposSolicitud(tiposSolicitudOptional.get().getTipoSolicitud())
                     .fechalog(new Date()).build();
@@ -126,5 +165,10 @@ public class TiposSolicitudService implements ITiposSolicitudService {
             throw new NotDataFound(NOEXISTENDATOS);
         }
 
+    }else {
+            throw new NotActivate(NOACTIVADO);
+        }
     }
+
+
 }

@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.Setter;
 
 import javax.persistence.Lob;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
 
@@ -43,4 +44,9 @@ public class ActualizarSolicitudesRequest {
 
     @NonNull
     private Long estadoId;
+
+    @NonNull
+    @NotBlank
+    @Email
+    private String usuario;
 }

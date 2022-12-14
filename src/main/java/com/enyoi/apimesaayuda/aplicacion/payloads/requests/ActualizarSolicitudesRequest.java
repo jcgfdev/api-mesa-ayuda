@@ -49,4 +49,7 @@ public class ActualizarSolicitudesRequest {
     @NotBlank
     @Email
     private String usuario;
+
+    @NonNull
+    private Long prioridad;
 }

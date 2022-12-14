@@ -44,4 +44,6 @@ public class Solicitudes {
     @JoinColumn(name = "estado_id",referencedColumnName = "id",nullable = false)
     @ManyToOne(optional = false)
     private EstadosSolicitud estadoId;
+    @Column(name = "prioridad", nullable = false, length = 1)
+    private Long prioridad;
 }

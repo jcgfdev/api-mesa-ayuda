@@ -21,4 +21,5 @@ public class SolicitudesDTO {
     private Date fechaSolicitud;
     private Date fechaFinalizado;
     private EstadosSolicitudDTO estadoId;
+    private Long prioridad;
 }

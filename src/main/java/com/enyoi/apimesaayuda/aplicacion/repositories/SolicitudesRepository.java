@@ -32,6 +32,8 @@ public interface SolicitudesRepository extends JpaRepository<Solicitudes, Long> 
 
     Page<Solicitudes> findByEstadoId(EstadosSolicitud estadoId, Pageable pageable);
 
+    Optional<Solicitudes> findByPrioridad(Long prioridad);
+
 
 
 }

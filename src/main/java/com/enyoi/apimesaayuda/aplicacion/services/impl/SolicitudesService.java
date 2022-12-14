@@ -145,6 +145,25 @@ public class SolicitudesService implements ISolicitudesService {
     }
 
     @Override
+    public SolicitudesDTO findByPrioridad(Long prioridad, String user) {
+        Usuarios usuario = usuariosRepository.findByEmail(user)
+                .orElseThrow(() -> new NotDataFound(NOACTIVADO));
+        if (Boolean.TRUE.equals(usuario.getActivado())) {
+            Optional<Solicitudes> solicitudesOptional = solicitudesRepository.findByPrioridad(prioridad);
+            Solicitudes solicitudes;
+            if (solicitudesOptional.isPresent()) {
+                solicitudes = solicitudesOptional.get();
+                return modelMapper.map(solicitudes, SolicitudesDTO.class);
+            } else {
+                throw new NotDataFound(NOEXISTENDATOS);
+            }
+
+        }else {
+            throw new NotActivate(NOACTIVADO);
+        }
+    }
+
+    @Override
     public Page<SolicitudesDTO> findByFechaSolicitudBetween(Date fechaInicio, Date fechaFin, int page, int size, String columnFilter, Sort.Direction direction, String user) {
         Usuarios usuario = usuariosRepository.findByEmail(user)
                 .orElseThrow(() -> new NotDataFound(NOACTIVADO));
@@ -202,6 +221,7 @@ public class SolicitudesService implements ISolicitudesService {
 
     @Override
     public SolicitudesDTO crear(SolicitudesRequest solicitudesRequest) {
+        var A = 1;
         Usuarios usuario = usuariosRepository.findByEmail(solicitudesRequest.getUsuario())
                 .orElseThrow(() -> new NotDataFound(NOACTIVADO));
         if (Boolean.TRUE.equals(usuario.getActivado())) {
@@ -228,6 +248,7 @@ public class SolicitudesService implements ISolicitudesService {
             EstadosSolicitud estadosSolicitud = estadosSolicitudRepository.findById(solicitudesRequest.getEstadoId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudes.setEstadoId(estadosSolicitud);
+            solicitudes.setPrioridad((long) A);
             LogsSolicitudes logsSolicitudes = LogsSolicitudes.builder()
                     .usuario(solicitudesRequest.getUsuario())
                     .acciones(Acciones.CREATED)
@@ -254,6 +275,11 @@ public class SolicitudesService implements ISolicitudesService {
             solicitudesGuardar.setFechaSolicitud(actualizarSolicitudesRequest.getFechaSolicitud());
             solicitudesGuardar.setFechaFinalizado(actualizarSolicitudesRequest.getFechaFinalizado());
             solicitudesGuardar.setTitulo(actualizarSolicitudesRequest.getTitulo());
+            if ((actualizarSolicitudesRequest.getPrioridad()<=3) && (actualizarSolicitudesRequest.getPrioridad()>=1)) {
+                solicitudesGuardar.setPrioridad(actualizarSolicitudesRequest.getPrioridad());
+            }else{
+                throw new NotDataFound("-Prioridad debe estar entre 1 y 3; 1 menos a 24hrs, 2 entre 24 y 47hrs y 3 mayor a 48hrs ");
+            }
             Dependencias dependencias = dependenciasRepository.findById(actualizarSolicitudesRequest.getDependenciasId())
                     .orElseThrow(() -> new NotDataFound(NOEXISTENDATOS));
             solicitudesGuardar.setDependenciasId(dependencias);

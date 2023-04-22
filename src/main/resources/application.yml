@@ -30,18 +30,15 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.MySQL5Dialect
   datasource:
-    #jdbc:mysql://enyoi.co:3306/enyoi_db
-    #enyoi_db
-    #3tT9ip9_8
-    url: jdbc:mysql://localhost:3306/bdenyoi
+    url: jdbc:mysql://localhost:3306/nombreBD
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   mail:
     host: smtp.office365.com
     port: 587
-    username: backend@enyoi.co
-    password: EY.back2022*
+    username: correo
+    password: clave
     properties:
       mail:
         smtp:
